@@ -5,44 +5,74 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login Page'),
+        title: const Text('Login', style: TextStyle(fontSize: 25),),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              'Login into your MyNet account.',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 20,),
             TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Username',
+              decoration: const InputDecoration(
+                labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextFormField(
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Add your authentication logic here
-                // For simplicity, let's just print a message for now
-                print('Login button pressed');
+
+                Navigator.pushReplacementNamed(context, '/home');
               },
-              child: Text('Login'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),
+              child: const Text('Login'),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
+            const SizedBox(height: 16),
+            TextButton(
               onPressed: () {
-                // Navigate to the login page
-                Navigator.pushNamed(context, '/home');
+                // Navigate to the register page
+                Navigator.pushReplacementNamed(context, '/register');
               },
-              child: Text('Go to Home Page'),
-            ),
+              child: RichText(
+                text: const TextSpan(
+                  text: 'Don\'t have an account? ',
+                  style: TextStyle(
+                    color: Colors.black, // Set the default text color
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Register here.',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline, // Add underline
+                        color: Colors.blue, // Set text color to blue
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),
