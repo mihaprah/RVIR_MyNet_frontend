@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_net/pages/CommodityPage.dart';
+import 'package:my_net/pages/CryptoPage.dart';
+import 'package:my_net/pages/StocksPage.dart';
+import 'package:my_net/pages/VaultsPage.dart';
 import 'pages/HomePage.dart';
 import 'pages/LoginPage.dart';
 import 'pages/RegisterPage.dart';
@@ -10,6 +14,7 @@ void main() async {
   runApp(MyApp());
 }
 
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,16 +22,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Routing Example',
       theme: ThemeData(
-        primaryColor: Color(0xFF4169E5),
-        errorColor: Colors.redAccent,
-        primaryColorLight: Color(0xFFC0CEDE),
-
+        primaryColor: const Color(0xFF4169E5),
+        primaryColorLight: const Color(0xFFC0CEDE),
       ),
-      initialRoute: AuthRoutes.login, // Set initial route
+      initialRoute: AuthRoutes.login,
       routes: {
         AuthRoutes.login: (context) => LoginPage(),
         AuthRoutes.register: (context) => RegisterPage(),
         AppRoutes.home: (context) => HomePage(),
+        AppRoutes.vaults: (context) => VaultsPage(),
+        AppRoutes.crypto: (context) => CryptoPage(),
+        AppRoutes.commodities: (context) => CommodityPage(),
+        AppRoutes.stocks: (context) => StocksPage(),
       },
     );
   }

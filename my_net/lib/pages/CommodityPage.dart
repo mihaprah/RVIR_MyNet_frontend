@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:my_net/main.dart';
 
+import '../routes/app_routes.dart';
+import '../routes/auth_routes.dart';
 import '../widgets/CustomAppBar.dart';
+import 'LoginPage.dart';
 
-class HomePage extends StatefulWidget {
+class CommodityPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _CommodityPageState createState() => _CommodityPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  String currentScreen = '/home'; // Example: Set the initial screen to '/home'
+class _CommodityPageState extends State<CommodityPage> {
+  String currentScreen = '/commodities'; // Example: Set the initial screen to '/home'
 
   @override
   Widget build(BuildContext context) {
@@ -22,30 +26,21 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               currentScreen = screen;
             });
+
+
             Navigator.pushReplacementNamed(context, screen);
+
+
           },
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Home Page!',
+            Text(
+              'Commodity Page!',
               style: TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the login page
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-              ),
-              child: const Text('Go to Login Page'),
             ),
           ],
         ),
