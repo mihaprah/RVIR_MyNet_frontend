@@ -8,13 +8,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String currentScreen = '/home'; // Example: Set the initial screen to '/home'
+  String currentScreen = '/home';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(90.0), // same as your CustomAppBar preferredSize
+        preferredSize: const Size.fromHeight(90.0),
         child: CustomAppBar(
           context: context,
           currentScreen: currentScreen,
