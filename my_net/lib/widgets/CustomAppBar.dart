@@ -116,7 +116,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                       child: Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/home', HomePage()),
+                            onPressed: () => widget.onScreenChange('/home', HomePage(client: client,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(

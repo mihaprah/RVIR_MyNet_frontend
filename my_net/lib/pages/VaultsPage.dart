@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_net/main.dart';
-import 'package:my_net/pages/HomePage.dart';
-
-import '../routes/app_routes.dart';
-import '../routes/auth_routes.dart';
+import 'package:my_net/models/Client.dart';
 import '../widgets/CustomAppBar.dart';
-import 'LoginPage.dart';
 
 class VaultsPage extends StatefulWidget {
   @override
@@ -13,7 +8,8 @@ class VaultsPage extends StatefulWidget {
 }
 
 class _VaultsPageState extends State<VaultsPage> {
-  String currentScreen = '/vaults'; // Example: Set the initial screen to '/home'
+  String currentScreen = '/vaults';
+  late Client currentClient;
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_net/main.dart';
-
-import '../routes/app_routes.dart';
-import '../routes/auth_routes.dart';
+import '../models/Client.dart';
 import '../widgets/CustomAppBar.dart';
-import 'LoginPage.dart';
 
 class CommodityPage extends StatefulWidget {
   @override
@@ -12,7 +8,8 @@ class CommodityPage extends StatefulWidget {
 }
 
 class _CommodityPageState extends State<CommodityPage> {
-  String currentScreen = '/commodities'; // Example: Set the initial screen to '/home'
+  String currentScreen = '/commodities';
+  late Client currentClient;
 
   @override
   Widget build(BuildContext context) {
