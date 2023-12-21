@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:my_net/pages/CommodityPage.dart';
+import 'package:my_net/pages/CryptoPage.dart';
+import 'package:my_net/pages/HomePage.dart';
+import 'package:my_net/pages/StocksPage.dart';
+import 'package:my_net/pages/VaultsPage.dart';
+
+import '../routes/app_routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(45.0);
 
   final String currentScreen;
-  final Function(String) onScreenChange;
+  final Function(String, Widget) onScreenChange;
   final BuildContext context;
 
   const CustomAppBar(
@@ -74,7 +81,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       child: Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => onScreenChange('/home'),
+                            onPressed: () => onScreenChange('/home', HomePage()),
                             style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.resolveWith<Color>(
@@ -99,7 +106,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => onScreenChange('/vaults'),
+                            onPressed: () => onScreenChange('/vaults', VaultsPage()),
                             style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.resolveWith<Color>(
@@ -124,7 +131,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => onScreenChange('/crypto'),
+                            onPressed: () => onScreenChange('/crypto', CryptoPage()),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
@@ -149,7 +156,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => onScreenChange('/stocks'),
+                            onPressed: () => onScreenChange('/stocks', StocksPage()),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
@@ -174,7 +181,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => onScreenChange('/commodities'),
+                            onPressed: () => onScreenChange('/commodities', CommodityPage()),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(

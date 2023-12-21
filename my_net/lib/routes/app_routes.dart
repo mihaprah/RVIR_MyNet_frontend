@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
+import '../pages/CommodityPage.dart';
+import '../pages/CryptoPage.dart';
 import '../pages/HomePage.dart';
 import '../pages/LoginPage.dart';
 import '../pages/RegisterPage.dart';
+import '../pages/StocksPage.dart';
 import '../pages/VaultsPage.dart';
 import 'auth_routes.dart';
 
@@ -21,6 +24,9 @@ class AppRoutes {
       AuthRoutes.register: (context) => RegisterPage(),
       AppRoutes.home: (context) => HomePage(),
       AppRoutes.vaults: (context) => VaultsPage(),
+      AppRoutes.crypto: (context) => CryptoPage(),
+      AppRoutes.commodities: (context) => CommodityPage(),
+      AppRoutes.stocks: (context) => StocksPage(),
       // Add other routes as needed
     };
   }
