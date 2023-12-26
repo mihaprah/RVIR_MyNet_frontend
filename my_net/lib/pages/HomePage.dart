@@ -5,6 +5,8 @@ import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
+import 'package:my_net/models/UpdateAmountRequest.dart';
+import 'package:my_net/widgets/PopupIconButton.dart';
 
 import '../models/CryptocurrencyShare.dart';
 import '../models/Vault.dart';
@@ -26,6 +28,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String currentScreen = '/home';
   List<Vault> clientVaults = [];
+  double cashBalace = 0.0;
   double vaultsSum = 0.0;
   double netWorth = 0.0;
   Map<String, double> cryptoShares = {};
@@ -35,11 +38,20 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    getClientCashBalance();
     getClientVaults();
     getClientCrypto();
     getClientStocks();
     getClientCommodities();
     calculateNetWorth();
+  }
+
+  void getClientCashBalance() {
+    if (widget.client != null) {
+      setState(() {
+        cashBalace = widget.client!.cashBalance;
+      });
+    }
   }
 
   void getClientVaults() {
@@ -158,13 +170,45 @@ class _HomePageState extends State<HomePage> {
     }
   }
   void calculateNetWorth(){
-    setState(() {
-      if (widget.client != null) {
-        netWorth = vaultsSum + widget.client!.cashBalance;
-      }
-    });
+    if (widget.client != null) {
+      double temp = vaultsSum + cashBalace;
+      temp = double.parse(temp.toStringAsFixed(2));
+
+      setState(() {
+        netWorth = temp;
+      });
+    }
   }
 
+  Future<void> updateCashBalance(double addedAmount) async {
+    try {
+      if (widget.client != null) {
+        var endPoint = "/client/updateCash/${widget.client!.id}";
+        var url = Uri.parse("$baseUrl$endPoint");
+        double newAmount = addedAmount + widget.client!.cashBalance;
+        UpdateAmountRequest requestBody = UpdateAmountRequest(amount: newAmount);
+
+        var response = await http.put(
+            url,
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(requestBody)
+        );
+
+        if (response.statusCode == 200) {
+          setState(() {
+            cashBalace = double.tryParse(response.body) ?? 0.0;
+          });
+          calculateNetWorth();
+        } else {
+          print("Request failed with status: ${response.statusCode}");
+        }
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +281,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   widget.client != null
-                                      ? "${widget.client!.cashBalance} €"
+                                      ? "$cashBalace €"
                                       : "Loading...",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -246,15 +290,15 @@ class _HomePageState extends State<HomePage> {
                                 )
                               ],
                             ),
-                            IconButton(
-                              onPressed: () {
-                                // Handle button press
+                            PopupIconButton(
+                              title: "Change cash balance",
+                              onSave: (bool isAddSelected, double amount) {
+                                if (isAddSelected){
+                                  updateCashBalance(amount);
+                                } else {
+                                  updateCashBalance(-amount);
+                                }
                               },
-                              icon: Icon(
-                                Icons.edit,
-                                color: Theme.of(context).primaryColor,
-                                size: 25,
-                              ),
                             )
                           ],
                         ),
@@ -365,7 +409,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       TextSpan(
                                         text: widget.client != null
-                                            ? '${widget.client!.cashBalance} €'
+                                            ? '$cashBalace €'
                                             : 'Loading...',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
