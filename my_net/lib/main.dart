@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: const Color(0xFF4169E5),
           primaryColorLight: const Color(0xFFC0CEDE),
+          scaffoldBackgroundColor: const Color(0xFFECECEC)
         ),
         initialRoute: AuthRoutes.login,
         routes: {

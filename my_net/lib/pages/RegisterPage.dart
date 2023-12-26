@@ -1,5 +1,18 @@
 import 'package:flutter/material.dart';
 
+var shadowDecoration = BoxDecoration(
+  borderRadius: const BorderRadius.all(Radius.circular(10)),
+  color: Colors.white,
+  boxShadow: [
+    BoxShadow(
+      color: Colors.grey.withOpacity(0.5),
+      spreadRadius: 2,
+      blurRadius: 3,
+      offset: const Offset(0, 3),
+    ),
+  ],
+);
+
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,47 +36,77 @@ class RegisterPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'First name',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'First name',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Last name',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Last name',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Address',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Address',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      labelText: 'Email',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      labelText: 'Password',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Repeat password',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: shadowDecoration,
+                child: TextFormField(
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                      labelText: 'Repeat password',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: InputBorder.none
+                  ),
                 ),
               ),
               const SizedBox(height: 16),

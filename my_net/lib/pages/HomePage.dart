@@ -207,7 +207,16 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         width: MediaQuery.of(context).size.width - 20.0,
                         decoration: BoxDecoration(
-                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
@@ -262,7 +271,16 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         width: MediaQuery.of(context).size.width - 20.0,
                         decoration: BoxDecoration(
-                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
@@ -307,7 +325,16 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         width: MediaQuery.of(context).size.width - 20.0,
                         decoration: BoxDecoration(
-                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
                         padding: const EdgeInsets.only(
                             left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
@@ -501,7 +528,16 @@ class _HomePageState extends State<HomePage> {
                       Container(
                           width: MediaQuery.of(context).size.width - 20.0,
                           decoration: BoxDecoration(
-                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
                           padding: const EdgeInsets.only(
                               left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
