@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class PopupIconButton extends StatefulWidget {
+class PopupEditCashBalance extends StatefulWidget {
   final Function(bool, double)? onSave;
   final String title;
 
-  const PopupIconButton({
+  const PopupEditCashBalance({
     Key? key,
     this.onSave,
     required this.title,
   }) : super(key: key);
 
   @override
-  _PopupIconButtonState createState() => _PopupIconButtonState();
+  _PopupEditCashBalanceState createState() => _PopupEditCashBalanceState();
 }
 
-class _PopupIconButtonState extends State<PopupIconButton> {
+class _PopupEditCashBalanceState extends State<PopupEditCashBalance> {
   bool isAddSelected = true;
   double amount = 0;
 

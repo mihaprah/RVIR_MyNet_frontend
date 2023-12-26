@@ -6,8 +6,10 @@ import 'package:my_net/models/Client.dart';
 import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
-import 'package:my_net/widgets/PopupIconButton.dart';
+import 'package:my_net/widgets/PopupEditCashBalance.dart';
+import 'package:provider/provider.dart';
 
+import '../models/ClientProvider.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../models/Vault.dart';
 import '../widgets/CustomAppBar.dart';
@@ -28,16 +30,18 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String currentScreen = '/home';
   List<Vault> clientVaults = [];
-  double cashBalace = 0.0;
+  double cashBalance = 0.0;
   double vaultsSum = 0.0;
   double netWorth = 0.0;
   Map<String, double> cryptoShares = {};
   Map<String, double> stocksShares = {};
   Map<String, double> commoditiesShares = {};
+  late Client client;
 
   @override
   void initState() {
     super.initState();
+    fetchClient();
     getClientCashBalance();
     getClientVaults();
     getClientCrypto();
@@ -46,15 +50,34 @@ class _HomePageState extends State<HomePage> {
     calculateNetWorth();
   }
 
+  Future<void> fetchClient() async {
+    try {
+      var endPoint = "/client/1";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.get(url);
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        client = Client.fromJson(jsonData);
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   void getClientCashBalance() {
     if (widget.client != null) {
       setState(() {
-        cashBalace = widget.client!.cashBalance;
+        cashBalance = widget.client!.cashBalance;
       });
     }
   }
 
   void getClientVaults() {
+    vaultsSum = 0.0;
     if (widget.client != null) {
       clientVaults = widget.client!.vaults;
       for (Vault v in clientVaults) {
@@ -171,7 +194,7 @@ class _HomePageState extends State<HomePage> {
   }
   void calculateNetWorth(){
     if (widget.client != null) {
-      double temp = vaultsSum + cashBalace;
+      double temp = vaultsSum + cashBalance;
       temp = double.parse(temp.toStringAsFixed(2));
 
       setState(() {
@@ -198,7 +221,7 @@ class _HomePageState extends State<HomePage> {
 
         if (response.statusCode == 200) {
           setState(() {
-            cashBalace = double.tryParse(response.body) ?? 0.0;
+            cashBalance = double.tryParse(response.body) ?? 0.0;
           });
           calculateNetWorth();
         } else {
@@ -281,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   widget.client != null
-                                      ? "$cashBalace €"
+                                      ? "$cashBalance €"
                                       : "Loading...",
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -290,7 +313,7 @@ class _HomePageState extends State<HomePage> {
                                 )
                               ],
                             ),
-                            PopupIconButton(
+                            PopupEditCashBalance(
                               title: "Change cash balance",
                               onSave: (bool isAddSelected, double amount) {
                                 if (isAddSelected){
@@ -409,7 +432,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       TextSpan(
                                         text: widget.client != null
-                                            ? '$cashBalace €'
+                                            ? '$cashBalance €'
                                             : 'Loading...',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,

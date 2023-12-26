@@ -21,7 +21,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({Key? key,
     required this.currentScreen,
     required this.onScreenChange,
-    required this.context})
+    required this.context,
+  })
       : super(key: key);
 
 
@@ -141,7 +142,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage()),
+                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage(client: client,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(

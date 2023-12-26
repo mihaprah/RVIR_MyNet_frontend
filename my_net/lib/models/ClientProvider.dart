@@ -4,10 +4,15 @@ import 'package:my_net/models/Client.dart';
 class ClientProvider extends ChangeNotifier {
   late Client _client;
 
-  Client get user => _client;
+  Client get client => _client;
 
-  void setUser(Client client) {
+  void setClient(Client client) {
     _client = client;
+    notifyListeners();
+  }
+
+  Future<void> updateClient(Client newClient) async {
+    _client = newClient;
     notifyListeners();
   }
 }
