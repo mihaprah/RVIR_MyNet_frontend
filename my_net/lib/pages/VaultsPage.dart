@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
-import 'package:my_net/models/ClientProvider.dart';
 import 'package:my_net/widgets/PopupAddVault.dart';
 import 'package:my_net/widgets/PopupEditVault.dart';
-import 'package:provider/provider.dart';
 import '../models/UpdateAmountRequest.dart';
 import '../models/Vault.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
+
+import 'SingleVaultPage.dart';
 
 class VaultsPage extends StatefulWidget {
   final Client? client;
@@ -319,9 +319,17 @@ class _VaultsPageState extends State<VaultsPage> {
                                   ((completion * 100).round()).toInt();
 
                                   return GestureDetector(
-                                    onTap: () {
-                                      // Separate page for each vault (with separate appBar, need new Page)
-                                      print(vault.id);
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SingleVaultPage(id: vault.id!),
+                                        ),
+                                      );
+
+                                      if (result) {
+                                        getClient(client.id);
+                                      }
                                     },
                                     child: Row(
                                       children: [

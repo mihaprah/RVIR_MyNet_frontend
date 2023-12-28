@@ -7,9 +7,6 @@ import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/widgets/PopupEditCashBalance.dart';
-import 'package:provider/provider.dart';
-
-import '../models/ClientProvider.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../models/Vault.dart';
 import '../widgets/CustomAppBar.dart';
