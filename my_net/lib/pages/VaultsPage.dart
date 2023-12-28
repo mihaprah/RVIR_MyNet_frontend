@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/models/ClientProvider.dart';
+import 'package:my_net/widgets/PopupAddVault.dart';
 import 'package:my_net/widgets/PopupEditVault.dart';
 import 'package:provider/provider.dart';
 import '../models/UpdateAmountRequest.dart';
@@ -142,6 +143,32 @@ class _VaultsPageState extends State<VaultsPage> {
     }
   }
 
+  Future<void> addNewVault(Vault newVault) async {
+    try {
+      var endPoint = "/vault/add";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.post(
+          url,
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(newVault)
+      );
+
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        getClient(client.id);
+        getClientVaults();
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+      }
+    } catch(e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,16 +260,13 @@ class _VaultsPageState extends State<VaultsPage> {
                                     },
                                 ),
                                 const SizedBox(width: 50),
-                                IconButton(
-                                  onPressed: () {
-                                    // Action for the add button
+                                PopupAddVault(
+                                  title: "Add new vault",
+                                  onSave: (String name, double goal, DateTime dueDate) {
+                                    Vault newVault = Vault(name: name, goal: goal, amount: 0.0, dueDate: dueDate, icon: "", client: client);
+                                    addNewVault(newVault);
                                   },
-                                  icon: Icon(
-                                    Icons.add,
-                                    color: Theme.of(context).primaryColor,
-                                    size: 25,
-                                  ),
-                                ),
+                                )
                               ],
                             ),
                           ),

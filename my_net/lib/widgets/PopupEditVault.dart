@@ -30,7 +30,7 @@ class _PopupEditVaultState extends State<PopupEditVault> {
       onPressed: () {
         _showPopup(context, widget.title);
         setState(() {
-          selectedVaultId = widget.vaults[0].id;
+          selectedVaultId = widget.vaults[0].id!;
         });
         },
       icon: Icon(
@@ -73,7 +73,7 @@ class _PopupEditVaultState extends State<PopupEditVault> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isAddSelected ? Colors.green : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Add'),
+                        child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold),),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -84,7 +84,7 @@ class _PopupEditVaultState extends State<PopupEditVault> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: !isAddSelected ? Colors.red : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Remove'),
+                        child: const Text('Remove', style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -96,8 +96,6 @@ class _PopupEditVaultState extends State<PopupEditVault> {
                       setState(() {
                         if (newValue != null) {
                           selectedVaultId = newValue;
-                          // Perform actions based on the selected vault ID (newValue)
-                          print('Selected Vault ID: $newValue');
                         }
                       });
                     },

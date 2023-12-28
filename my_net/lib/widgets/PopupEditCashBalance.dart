@@ -56,7 +56,7 @@ class _PopupEditCashBalanceState extends State<PopupEditCashBalance> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isAddSelected ? Colors.green : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Add'),
+                        child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -67,7 +67,7 @@ class _PopupEditCashBalanceState extends State<PopupEditCashBalance> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: !isAddSelected ? Colors.red : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Remove'),
+                        child: const Text('Remove', style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
