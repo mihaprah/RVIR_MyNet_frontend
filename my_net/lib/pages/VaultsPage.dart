@@ -335,7 +335,7 @@ class _VaultsPageState extends State<VaultsPage> {
                                         ),
                                       );
 
-                                      if (result) {
+                                      if (result == null) {
                                         getClient(client.id);
                                       }
                                     },

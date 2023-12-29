@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_net/widgets/PopupDeleteVault.dart';
 
 import '../models/Vault.dart';
 import 'LoginPage.dart';
@@ -101,7 +102,7 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        Navigator.pop(context, true);
+        Navigator.pop(context, null);
       }
     } catch(e){
       print("Error: $e");
@@ -121,6 +122,29 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
       return false;
     }
     return true;
+  }
+
+  Future<void> deleteVault() async {
+    try {
+      var endPoint = "/vault/delete/${vault!.id}";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.delete(url);
+
+      if (response.statusCode == 200){
+        Navigator.pop(context, null);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Vault deleted successfully."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e){
+      print("Error: $e");
+    }
   }
 
   @override
@@ -236,6 +260,15 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                               ),
                             ),
                             child: const Text('Save changes'),
+                          ),
+                          const SizedBox(height: 16),
+                          PopupDeleteVault(
+                            title: "Are you sure you want to delete the vault?",
+                            deleteVault: (delete) {
+                              if (delete) {
+                                deleteVault();
+                              }
+                            },
                           ),
                           const SizedBox(height: 16),
                         ],
