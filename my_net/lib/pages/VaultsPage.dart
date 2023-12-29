@@ -56,7 +56,15 @@ class _VaultsPageState extends State<VaultsPage> {
 
   Future<void> updateVaultAmount(bool isAddSelected, double amount, int vaultId) async {
     if (isAddSelected && amount > widget.client!.cashBalance){
-    //   Error NOT ENOUGH MONEY
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cash balance is not big enough."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
     }
 
     double currentAmount = 0.0;

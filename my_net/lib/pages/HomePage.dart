@@ -38,25 +38,32 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    setClient(widget.client!);
     fetchClient();
-    getClientCashBalance();
-    getClientVaults();
     getClientCrypto();
     getClientStocks();
     getClientCommodities();
+  }
+
+  void setClient(clientOne){
+    setState(() {
+      client = clientOne;
+    });
+    getClientCashBalance();
+    getClientVaults();
     calculateNetWorth();
   }
 
   Future<void> fetchClient() async {
     try {
-      var endPoint = "/client/1";
+      var endPoint = "/client/${widget.client!.id}";
       var url = Uri.parse("$baseUrl$endPoint");
 
       var response = await http.get(url);
       var jsonData = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        client = Client.fromJson(jsonData);
+        setClient(Client.fromJson(jsonData));
       } else {
         print('Request failed with status: ${response.statusCode}');
       }
@@ -65,23 +72,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void getClientCashBalance() {
-    if (widget.client != null) {
-      setState(() {
-        cashBalance = widget.client!.cashBalance;
-      });
-    }
+  Future<void> getClientCashBalance() async {
+    setState(() {
+      cashBalance = client.cashBalance;
+    });
   }
 
-  void getClientVaults() {
+  Future<void> getClientVaults() async {
     vaultsSum = 0.0;
-    if (widget.client != null) {
-      clientVaults = widget.client!.vaults;
-      for (Vault v in clientVaults) {
-        vaultsSum += v.amount;
-      }
-      vaultsSum = double.parse(vaultsSum.toStringAsFixed(2));
+    clientVaults = client.vaults;
+    for (Vault v in clientVaults) {
+      vaultsSum += v.amount;
     }
+    vaultsSum = double.parse(vaultsSum.toStringAsFixed(2));
   }
 
   Future<void> getClientCrypto() async {
@@ -190,14 +193,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
   void calculateNetWorth(){
-    if (widget.client != null) {
-      double temp = vaultsSum + cashBalance;
-      temp = double.parse(temp.toStringAsFixed(2));
+    double temp = vaultsSum + cashBalance;
+    temp = double.parse(temp.toStringAsFixed(2));
 
-      setState(() {
-        netWorth = temp;
-      });
-    }
+    setState(() {
+      netWorth = temp;
+    });
   }
 
   Future<void> updateCashBalance(double addedAmount) async {

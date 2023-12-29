@@ -85,10 +85,10 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
 
       var response = await http.put(
         url,
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(updatedVault)
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(updatedVault)
       );
 
       if (response.statusCode == 200){

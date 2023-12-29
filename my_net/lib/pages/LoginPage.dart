@@ -1,4 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:my_net/constants/constants.dart';
+import 'package:my_net/models/LoginRequest.dart';
+import 'package:http/http.dart' as http;
+import 'package:my_net/models/Client.dart';
+import 'package:my_net/pages/HomePage.dart';
+import 'package:provider/provider.dart';
+
+import '../models/ClientProvider.dart';
 
 var shadowDecoration = BoxDecoration(
   borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -13,12 +23,88 @@ var shadowDecoration = BoxDecoration(
   ],
 );
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailEditingController = TextEditingController();
+  final TextEditingController _passwordEditingController = TextEditingController();
+
+  Future<void> clientLogin() async {
+    LoginRequest loginRequest = LoginRequest(
+        email: _emailEditingController.text,
+        password: _passwordEditingController.text);
+    if(!checkInput(loginRequest)){
+      return;
+    }
+
+    try {
+      var endPoint = "/auth/login";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(loginRequest)
+      );
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        Client client = Client.fromJson(jsonData);
+        setGlobalClient(client);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Email or password incorrect."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  bool checkInput(LoginRequest loginRequest){
+    if (loginRequest.email == "" || loginRequest.password == ""){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Fill all the fields."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  void setGlobalClient(Client client) {
+    Provider.of<ClientProvider>(context, listen: false).setClient(client);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(client: client,),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login', style: TextStyle(fontSize: 25),),
+        title: const Text(
+          'Login',
+          style: TextStyle(fontSize: 25),
+        ),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
       ),
@@ -42,11 +128,12 @@ class LoginPage extends StatelessWidget {
                   Container(
                     decoration: shadowDecoration,
                     child: TextFormField(
+                      controller: _emailEditingController,
                       decoration: const InputDecoration(
-                          labelText: 'Email',
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: InputBorder.none
+                        labelText: 'Email',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: InputBorder.none,
                       ),
                     ),
                   ),
@@ -54,19 +141,20 @@ class LoginPage extends StatelessWidget {
                   Container(
                     decoration: shadowDecoration,
                     child: TextFormField(
+                      controller: _passwordEditingController,
                       obscureText: true,
                       decoration: const InputDecoration(
-                          labelText: 'Password',
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: InputBorder.none
+                        labelText: 'Password',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: InputBorder.none,
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/home');
+                      clientLogin();
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
@@ -78,21 +166,20 @@ class LoginPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
-                      // Navigate to the register page
                       Navigator.pushReplacementNamed(context, '/register');
                     },
                     child: RichText(
                       text: const TextSpan(
                         text: 'Don\'t have an account? ',
                         style: TextStyle(
-                          color: Colors.black, // Set the default text color
+                          color: Colors.black,
                         ),
                         children: <TextSpan>[
                           TextSpan(
                             text: 'Register here.',
                             style: TextStyle(
-                              decoration: TextDecoration.underline, // Add underline
-                              color: Colors.blue, // Set text color to blue
+                              decoration: TextDecoration.underline,
+                              color: Colors.blue,
                             ),
                           ),
                         ],
@@ -103,7 +190,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
-        )
+        ),
       ),
     );
   }
