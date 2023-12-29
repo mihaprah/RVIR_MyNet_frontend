@@ -93,7 +93,7 @@ class _VaultsPageState extends State<VaultsPage> {
         } else {
           updateCashBalance(-amount);
         }
-        getClient(client.id);
+        getClient(client.id!);
       } else {
         print(response.statusCode);
       }
@@ -167,7 +167,7 @@ class _VaultsPageState extends State<VaultsPage> {
       var jsonData = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        getClient(client.id);
+        getClient(client.id!);
         getClientVaults();
       } else {
         print('Request failed with status: ${response.statusCode}');
@@ -336,7 +336,7 @@ class _VaultsPageState extends State<VaultsPage> {
                                       );
 
                                       if (result == null) {
-                                        getClient(client.id);
+                                        getClient(client.id!);
                                       }
                                     },
                                     child: Row(

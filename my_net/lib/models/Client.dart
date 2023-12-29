@@ -1,7 +1,7 @@
 import 'Vault.dart';
 
 class Client {
-  final int id;
+  final int? id;
   final String name;
   final String lastname;
   final String address;
@@ -12,7 +12,7 @@ class Client {
   final List<Vault> vaults;
 
   Client({
-    required this.id,
+    this.id,
     required this.name,
     required this.lastname,
     required this.address,
