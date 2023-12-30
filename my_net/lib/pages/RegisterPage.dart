@@ -1,6 +1,10 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/Vault.dart';
 
@@ -35,12 +39,24 @@ class _RegisterPageState extends State<RegisterPage> {
     Client newClient = Client(
         name: _nameEditingController.text,
         lastname: _lastnameEditingController.text,
-        address: "", // To be removed
+        address: "temp", // To be removed
         cashBalance: 0.0,
         email: _emailEditingController.text,
         password: _passwordEditingController.text,
         salt: "",
         vaults: clientVaults);
+
+    if(await checkEmail(newClient)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Account with this email already exists."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     if (!passwordMatch()) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,8 +92,69 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-  //   TODO -> Add backend call ro /auth/register
+    try {
+      var endPoint = "/auth/register";
+      var url = Uri.parse("$baseUrl$endPoint");
 
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(newClient)
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacementNamed(context, "/login");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("New account created successfully."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Something went wrong with registration."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+    Future<bool> checkEmail(Client client) async {
+    List<Client> allClients = [];
+
+    try {
+      var endPoint = "/client";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.get(url);
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        allClients = (jsonData as List)
+            .map((item) => Client.fromJson(item))
+            .toList();
+        for (var c in allClients) {
+          if (c.email == client.email) {
+            return true;
+          }
+        }
+      } else {
+        return true;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+    return false;
   }
 
   bool passwordMatch() {
@@ -105,12 +182,11 @@ class _RegisterPageState extends State<RegisterPage> {
     if(client.name.isNotEmpty ||
       client.lastname.isNotEmpty ||
       client.email.isNotEmpty ||
-      client.password.isNotEmpty ||
-      _repeatPasswordEditingController.text.isNotEmpty
+      client.password.isNotEmpty
     ) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   @override
@@ -207,7 +283,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
+                  createNewClient();
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
@@ -218,7 +294,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               TextButton(
                 onPressed: () {
-                  createNewClient();
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: RichText(
