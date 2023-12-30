@@ -206,7 +206,7 @@ class _HomePageState extends State<HomePage> {
       if (widget.client != null) {
         var endPoint = "/client/updateCash/${widget.client!.id}";
         var url = Uri.parse("$baseUrl$endPoint");
-        double newAmount = addedAmount + widget.client!.cashBalance;
+        double newAmount = addedAmount + client.cashBalance;
         UpdateAmountRequest requestBody = UpdateAmountRequest(amount: newAmount);
 
         var response = await http.put(
@@ -222,6 +222,7 @@ class _HomePageState extends State<HomePage> {
             cashBalance = double.tryParse(response.body) ?? 0.0;
           });
           calculateNetWorth();
+          fetchClient();
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -463,9 +464,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: widget.client != null
-                                            ? ' (${widget.client!.vaults.length} vaults)'
-                                            : '',
+                                        text: (" (${client.vaults.length} vaults)"),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
                                           fontSize: 12,
