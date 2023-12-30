@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/models/ClientProvider.dart';
 import 'package:my_net/pages/CommodityPage.dart';
 import 'package:my_net/pages/CryptoPage.dart';
 import 'package:my_net/pages/HomePage.dart';
 import 'package:my_net/pages/StocksPage.dart';
 import 'package:my_net/pages/VaultsPage.dart';
-import 'package:http/http.dart' as http;
-import 'package:my_net/constants/constants.dart';
+import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   @override
@@ -37,7 +37,6 @@ class _CustomAppBarState extends State<CustomAppBar>{
   @override
   void initState() {
     super.initState();
-    fetchClient();
   }
 
   Color getButtonBackgroundColor(String screen) {
@@ -52,26 +51,11 @@ class _CustomAppBarState extends State<CustomAppBar>{
         : Theme.of(context).primaryColor;
   }
 
-  Future<void> fetchClient() async {
-    try {
-      var endPoint = "/client/1";
-      var url = Uri.parse("$baseUrl$endPoint");
-
-      var response = await http.get(url);
-      var jsonData = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        client = Client.fromJson(jsonData);
-      } else {
-        print('Request failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    ClientProvider clientProvider = Provider.of<ClientProvider>(context, listen: true);
+    Client clientOne = clientProvider.client;
+
     return PreferredSize(
       preferredSize: const Size.fromHeight(45.0),
       child: AppBar(
@@ -117,7 +101,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                       child: Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/home', HomePage(client: client,)),
+                            onPressed: () => widget.onScreenChange('/home', HomePage(client: clientOne,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
@@ -142,7 +126,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage(client: client,)),
+                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage(client: clientOne,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(

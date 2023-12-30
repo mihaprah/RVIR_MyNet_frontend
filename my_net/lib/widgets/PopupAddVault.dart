@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/Vault.dart';
-
 class PopupAddVault extends StatefulWidget {
   final Function(String, double, DateTime)? onSave;
   final String title;

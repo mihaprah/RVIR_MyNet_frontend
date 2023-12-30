@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/models/ClientProvider.dart';
 import 'package:my_net/widgets/PopupAddVault.dart';
 import 'package:my_net/widgets/PopupEditVault.dart';
+import 'package:provider/provider.dart';
 import '../models/UpdateAmountRequest.dart';
 import '../models/Vault.dart';
 import '../widgets/CustomAppBar.dart';
@@ -34,13 +36,32 @@ class _VaultsPageState extends State<VaultsPage> {
   void initState() {
     super.initState();
     setClient(widget.client!);
+    fetchClient();
     getClientVaults();
+  }
+
+  Future<void> fetchClient() async {
+    try {
+      var endPoint = "/client/${widget.client!.id}";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.get(url);
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setClient(Client.fromJson(jsonData));
+        getClientVaults();
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   void setClient(Client clientOne) {
     setState(() {
       client = clientOne;
     });
+    print("Cash balance ${clientOne.cashBalance}");
   }
 
   void getClientVaults() {
@@ -55,7 +76,7 @@ class _VaultsPageState extends State<VaultsPage> {
     }
 
   Future<void> updateVaultAmount(bool isAddSelected, double amount, int vaultId) async {
-    if (isAddSelected && amount > widget.client!.cashBalance){
+    if (isAddSelected && amount > client.cashBalance){
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Cash balance is not big enough."),
@@ -93,7 +114,7 @@ class _VaultsPageState extends State<VaultsPage> {
         } else {
           updateCashBalance(-amount);
         }
-        getClient(client.id!);
+        fetchClient();
       } else {
         print(response.statusCode);
       }
@@ -130,26 +151,26 @@ class _VaultsPageState extends State<VaultsPage> {
     }
   }
 
-  Future<void> getClient(int id) async {
-    try {
-      var endPoint = "/client/$id";
-      var url = Uri.parse("$baseUrl$endPoint");
-
-      var response = await http.get(url);
-
-      var jsonData = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        client = Client.fromJson(jsonData);
-        setClient(client);
-        getClientVaults();
-      } else {
-        print('Request failed with status: ${response.statusCode}');
-      }
-    } catch(e) {
-      print("Error: $e");
-    }
-  }
+  // Future<void> getClient(int id) async {
+  //   try {
+  //     var endPoint = "/client/$id";
+  //     var url = Uri.parse("$baseUrl$endPoint");
+  //
+  //     var response = await http.get(url);
+  //
+  //     var jsonData = json.decode(response.body);
+  //
+  //     if (response.statusCode == 200) {
+  //       client = Client.fromJson(jsonData);
+  //       setClient(client);
+  //       getClientVaults();
+  //     } else {
+  //       print('Request failed with status: ${response.statusCode}');
+  //     }
+  //   } catch(e) {
+  //     print("Error: $e");
+  //   }
+  // }
 
   Future<void> addNewVault(Vault newVault) async {
     try {
@@ -164,10 +185,8 @@ class _VaultsPageState extends State<VaultsPage> {
           body: jsonEncode(newVault)
       );
 
-      var jsonData = json.decode(response.body);
-
       if (response.statusCode == 200) {
-        getClient(client.id!);
+        fetchClient();
         getClientVaults();
       } else {
         print('Request failed with status: ${response.statusCode}');
@@ -179,6 +198,8 @@ class _VaultsPageState extends State<VaultsPage> {
 
   @override
   Widget build(BuildContext context) {
+    ClientProvider clientProvider = Provider.of<ClientProvider>(context);
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(90.0), // same as your CustomAppBar preferredSize
@@ -189,6 +210,7 @@ class _VaultsPageState extends State<VaultsPage> {
               setState(() {
                 currentScreen = screen;
               });
+              clientProvider.updateClient(client);
               Navigator.pushReplacement(
                 context,
                 PageRouteBuilder(
@@ -336,7 +358,7 @@ class _VaultsPageState extends State<VaultsPage> {
                                       );
 
                                       if (result == null) {
-                                        getClient(client.id!);
+                                        fetchClient();
                                       }
                                     },
                                     child: Row(
