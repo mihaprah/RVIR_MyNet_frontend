@@ -53,7 +53,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
   @override
   Widget build(BuildContext context) {
     ClientProvider clientProvider = Provider.of<ClientProvider>(context, listen: true);
-    Client clientOne = clientProvider.client;
+    Client currentClient = clientProvider.client;
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(45.0),
@@ -101,7 +101,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                       child: Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/home', HomePage(client: clientOne,)),
+                            onPressed: () => widget.onScreenChange('/home', HomePage(client: currentClient,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
@@ -126,7 +126,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage(client: clientOne,)),
+                            onPressed: () => widget.onScreenChange('/vaults', VaultsPage(client: currentClient,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
@@ -151,7 +151,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/crypto', CryptoPage()),
+                            onPressed: () => widget.onScreenChange('/crypto', CryptoPage(client: currentClient,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
