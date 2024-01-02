@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
+import 'package:my_net/widgets/PopupEditCrypto.dart';
 import '../constants/constants.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../widgets/CustomAppBar.dart';
@@ -32,6 +33,7 @@ class _CryptoPageState extends State<CryptoPage> {
   Map<String, double> cryptoShares = {};
   List<CryptocurrencyShare> clientCrypto = [];
   String selectedCrypto = 'ETH';
+  List<String> availableCryptos = [];
 
   double maxValueEtherium = 5000;
   double maxValueBitcoin = 60000;
@@ -129,6 +131,7 @@ class _CryptoPageState extends State<CryptoPage> {
           }
           setState(() {
             clientCrypto = clientCryptos;
+            availableCryptos = cryptoShares.keys.toList();
           });
         } else {
           print("Request failed with status: ${response.statusCode}");
@@ -226,11 +229,16 @@ class _CryptoPageState extends State<CryptoPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                IconButton(onPressed: () {}, icon: Icon(
-                                  Icons.edit,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 25,
-                                ),
+                                PopupEditCrypto(
+                                    title: "Change cryptos amount.",
+                                    cryptos: availableCryptos,
+                                    onSave: (bool isAddSelected, double amount, String code) {
+                                      // TODO -> after backend fix for adding existing cryptos (it needs to update it)
+                                      // TODO -> and get crypto by code is implemented
+                                      print(isAddSelected);
+                                      print(amount);
+                                      print(code);
+                                    },
                                 ),
                                 const SizedBox(width: 50),
                                 IconButton(onPressed: () {}, icon: Icon(

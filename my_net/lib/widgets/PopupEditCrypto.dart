@@ -3,26 +3,26 @@ import 'package:flutter/services.dart';
 
 import '../models/Vault.dart';
 
-class PopupEditVault extends StatefulWidget {
-  final Function(bool, double, int)? onSave;
+class PopupEditCrypto extends StatefulWidget {
+  final Function(bool, double, String)? onSave;
   final String title;
-  final List<Vault> vaults;
+  final List<String> cryptos;
 
-  const PopupEditVault({
+  const PopupEditCrypto({
     Key? key,
     this.onSave,
     required this.title,
-    required this.vaults
+    required this.cryptos
   }) : super(key: key);
 
   @override
-  _PopupEditVaultState createState() => _PopupEditVaultState();
+  _PopupEditCryptoState createState() => _PopupEditCryptoState();
 }
 
-class _PopupEditVaultState extends State<PopupEditVault> {
+class _PopupEditCryptoState extends State<PopupEditCrypto> {
   bool isAddSelected = true;
   double amount = 0;
-  int selectedVaultId = 0;
+  String selectedCrypto = "";
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +30,9 @@ class _PopupEditVaultState extends State<PopupEditVault> {
       onPressed: () {
         _showPopup(context, widget.title);
         setState(() {
-          selectedVaultId = widget.vaults[0].id!;
+          selectedCrypto = widget.cryptos[0];
         });
-        },
+      },
       icon: Icon(
         Icons.edit,
         color: Theme.of(context).primaryColor,
@@ -41,11 +41,11 @@ class _PopupEditVaultState extends State<PopupEditVault> {
     );
   }
 
-  List<DropdownMenuItem<int>> buildDropdownMenuItems() {
-    return widget.vaults.map((vault) {
-      return DropdownMenuItem<int>(
-        value: vault.id,
-        child: Text(vault.name),
+  List<DropdownMenuItem<String>> buildDropdownMenuItems() {
+    return widget.cryptos.map((crypto) {
+      return DropdownMenuItem<String>(
+        value: crypto,
+        child: Text(crypto),
       );
     }).toList();
   }
@@ -89,13 +89,13 @@ class _PopupEditVaultState extends State<PopupEditVault> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  DropdownButton<int>(
-                    value: selectedVaultId,
+                  DropdownButton<String>(
+                    value: selectedCrypto,
                     items: buildDropdownMenuItems(),
-                    onChanged: (int? newValue) {
+                    onChanged: (String? newValue) {
                       setState(() {
                         if (newValue != null) {
-                          selectedVaultId = newValue;
+                          selectedCrypto = newValue;
                         }
                       });
                     },
@@ -128,20 +128,11 @@ class _PopupEditVaultState extends State<PopupEditVault> {
                 TextButton(
                   onPressed: () {
                     if (widget.onSave != null){
-                      if (amount != 0.0) {
-                        widget.onSave!(isAddSelected, amount, selectedVaultId);
+                      if( amount != 0.0) {
+                        widget.onSave!(isAddSelected, amount, selectedCrypto);
                         amount = 0.0;
                         isAddSelected = true;
                         Navigator.of(context).pop();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Amount must be provided."),
-                            duration: Duration(seconds: 3),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
                       }
                     }
                   },
