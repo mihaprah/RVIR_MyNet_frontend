@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/widgets/CustomLineChart.dart';
 import '../constants/constants.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../widgets/CustomAppBar.dart';
@@ -26,6 +30,53 @@ class _CryptoPageState extends State<CryptoPage> {
   double cryptoSum = 0.0;
   late Client client;
   Map<String, double> cryptoShares = {};
+  List<CryptocurrencyShare> clientCrypto = [];
+  String selectedCrypto = 'ETH';
+
+  double maxValueEtherium = 5000;
+  double maxValueBitcoin = 60000;
+
+  Map<String, List<FlSpot>> cryptoData = {
+    'ETH': [
+      FlSpot(0, 2000),
+      FlSpot(1, 3400),
+      FlSpot(2, 2600),
+      FlSpot(3, 1600),
+      FlSpot(4, 3000),
+      FlSpot(5, 4200),
+      FlSpot(6, 4800),
+      FlSpot(7, 4865),
+      FlSpot(8, 4835),
+      FlSpot(9, 4634),
+      FlSpot(10, 3567),
+      FlSpot(11, 4040),
+    ],
+    'BTC': [
+      FlSpot(0, 30000),
+      FlSpot(1, 34000),
+      FlSpot(2, 26000),
+      FlSpot(3, 16000),
+      FlSpot(4, 30000),
+      FlSpot(5, 42000),
+      FlSpot(6, 48000),
+      FlSpot(7, 48565),
+      FlSpot(8, 48635),
+      FlSpot(9, 46834),
+      FlSpot(10, 34567),
+      FlSpot(11, 49040),
+    ],
+    'BNB': [
+      FlSpot(0, 20000),
+      FlSpot(1, 22000),
+      // Add more data points for BNB...
+    ],
+  };
+
+  Map<String, double> cryptoMaxValues = {
+    'ETH': 5000,
+    'BTC': 60000,
+    'BNB': 25000,
+  };
 
   @override
   void initState() {
@@ -76,6 +127,9 @@ class _CryptoPageState extends State<CryptoPage> {
               addOrUpdateCryptoShare(crypto.cryptocurrency.code, crypto.amount);
             });
           }
+          setState(() {
+            clientCrypto = clientCryptos;
+          });
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -119,87 +173,17 @@ class _CryptoPageState extends State<CryptoPage> {
           },
         ),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width - 20.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5), // Color of the shadow
-                          spreadRadius: 2,
-                          blurRadius: 3,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.only(
-                      left: 15.0,
-                      top: 10.0,
-                      right: 20.0,
-                      bottom: 10.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Crypto balance',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text( "$cryptoSum €",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(onPressed: () {}, icon: Icon(
-                                Icons.edit,
-                                color: Theme.of(context).primaryColor,
-                                size: 25,
-                              ),
-                              ),
-                              const SizedBox(width: 50),
-                              IconButton(onPressed: () {}, icon: Icon(
-                                Icons.add,
-                                color: Theme.of(context).primaryColor,
-                                size: 25,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
                       width: MediaQuery.of(context).size.width - 20.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -214,171 +198,314 @@ class _CryptoPageState extends State<CryptoPage> {
                         ],
                       ),
                       padding: const EdgeInsets.only(
-                          left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
+                        left: 15.0,
+                        top: 10.0,
+                        right: 20.0,
+                        bottom: 10.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Cryptocurrencies',
+                            'Crypto balance',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          ListView.builder(
-                              itemCount: cryptoShares.length,
-                              shrinkWrap: true,
-                              itemBuilder: (BuildContext context, int index) {
-                                final List<MapEntry<String, double>> cryptoList = cryptoShares.entries.toList();
-                                final crypto = cryptoList[index];
-                                final cryptoCode = crypto.key;
-                                String cryptoName = "";
-                                final shares = crypto.value;
-                                final completion = 0.0;
-                                final percentage = ((completion * 100).round()).toInt();
+                          const SizedBox(
+                            height: 2,
+                          ),
+                          Text( "$cryptoSum €",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(onPressed: () {}, icon: Icon(
+                                  Icons.edit,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 25,
+                                ),
+                                ),
+                                const SizedBox(width: 50),
+                                IconButton(onPressed: () {}, icon: Icon(
+                                  Icons.add,
+                                  color: Theme.of(context).primaryColor,
+                                  size: 25,
+                                ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width - 20.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.only(
+                            left: 15.0, top: 10.0, right: 20.0, bottom: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Cryptocurrencies',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            ListView.builder(
+                                itemCount: cryptoShares.length,
+                                shrinkWrap: true,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final List<MapEntry<String, double>> cryptoList = cryptoShares.entries.toList();
+                                  final crypto = cryptoList[index];
+                                  final cryptoCode = crypto.key;
+                                  String cryptoName = "";
+                                  final shares = crypto.value;
+                                  final completion = 0.0;
+                                  final percentage = ((completion * 100).round()).toInt();
 
-                                if (cryptoCode == "ETH") {
-                                  cryptoName = "Etherium";
-                                } else if (cryptoCode == "BTC") {
-                                  cryptoName = "Bitcoin";
-                                } else {
-                                  cryptoName = "Binance coin";
-                                }
+                                  if (cryptoCode == "ETH") {
+                                    cryptoName = "Etherium";
+                                  } else if (cryptoCode == "BTC") {
+                                    cryptoName = "Bitcoin";
+                                  } else {
+                                    cryptoName = "Binance coin";
+                                  }
 
-                                return GestureDetector(
-                                  onTap: () async {
-                                    // final result = await Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => SingleVaultPage(id: vault.id!),
-                                    //   ),
-                                    // );
-                                    //
-                                    // if (result == null) {
-                                    //   fetchClient();
-                                    // }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: 50,
-                                                height: 50,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      // final result = await Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => SingleVaultPage(id: vault.id!),
+                                      //   ),
+                                      // );
+                                      //
+                                      // if (result == null) {
+                                      //   fetchClient();
+                                      // }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      cryptoCode,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                child: Center(
+                                                const SizedBox(width: 15),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      cryptoName,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.normal,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    Text(
+                                                      "100.00 €",
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 20,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    Text(
+                                                      "$shares $cryptoCode \u2022 20000.00 €",
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              right: 10.0, top: 15.0),
+                                          child: Container(
+                                            width: 60,
+                                            height: 60,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: Colors.transparent,
+                                                  width: 4),
+                                              color: Colors.transparent,
+                                            ),
+                                            child: Stack(
+                                              children: [
+                                                Center(
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 4,
+                                                    value: 0.33,
+                                                    valueColor:
+                                                    AlwaysStoppedAnimation<Color>(
+                                                        Theme.of(context)
+                                                            .primaryColor),
+                                                    backgroundColor:
+                                                    Colors.transparent,
+                                                  ),
+                                                ),
+                                                Center(
                                                   child: Text(
-                                                    cryptoCode,
+                                                    '$percentage%',
                                                     style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 15),
-                                              Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    cryptoName,
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.normal,
-                                                      fontSize: 15,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Text(
-                                                   "100.00 €",
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Text(
-                                                    "$shares",
-                                                    style: const TextStyle(
-                                                      fontWeight: FontWeight.w400,
+                                                      color: Colors.black,
                                                       fontSize: 12,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 10.0, top: 15.0),
-                                        child: Container(
-                                          width: 60,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: Colors.transparent,
-                                                width: 4),
-                                            color: Colors.transparent,
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              Center(
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 4,
-                                                  value: 0.33,
-                                                  valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Theme.of(context)
-                                                          .primaryColor),
-                                                  backgroundColor:
-                                                  Colors.transparent,
                                                 ),
-                                              ),
-                                              Center(
-                                                child: Text(
-                                                  '$percentage%',
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-
-
-                              }),
-                        ],
-                      )),
-                ],
+                                      ],
+                                    ),
+                                  );
+                                }),
+                          ],
+                        )),
+                  ],
+                ),
               ),
-            )
-          ],
+              const SizedBox(height: 10,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 3,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.only(
+                          left: 1.0,
+                          top: 1.0,
+                          right: 1.0,
+                          bottom: 1.0,
+                        ),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const SizedBox(width: 20,),
+                                DropdownButton<String>(
+                                  value: selectedCrypto,
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        selectedCrypto = newValue;
+                                      });
+                                    }
+                                  },
+                                  items: <String>['ETH', 'BTC', 'BNB'].map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const SizedBox(width: 20,),
+                                const Text("2365.56 €", style: TextStyle(fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                            CustomLineChart(
+                              dataSpots: cryptoData[selectedCrypto] ?? [],
+                              maxValue: cryptoMaxValues[selectedCrypto] ?? 0.0,
+                            )
+                          ],
+                        )
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10,)
+            ],
+          ),
         ),
-      ),
+      )
+
     );
   }
 }
