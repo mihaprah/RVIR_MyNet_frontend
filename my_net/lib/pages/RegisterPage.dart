@@ -39,7 +39,6 @@ class _RegisterPageState extends State<RegisterPage> {
     Client newClient = Client(
         name: _nameEditingController.text,
         lastname: _lastnameEditingController.text,
-        address: "temp", // To be removed
         cashBalance: 0.0,
         email: _emailEditingController.text,
         password: _passwordEditingController.text,

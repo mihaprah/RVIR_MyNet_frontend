@@ -73,7 +73,6 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
         goal: double.parse(_goalEditingController.text),
         amount: vault!.amount,
         dueDate: dueDate!,
-        icon: vault!.icon,
         client: vault!.client);
 
     if (!checkVault(updatedVault)){

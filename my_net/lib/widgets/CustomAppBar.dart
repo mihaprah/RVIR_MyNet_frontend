@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
@@ -73,6 +72,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
             IconButton(
               onPressed: () {
                 // Handle the action when the person icon is pressed
+              //   TODO -> UserPage with settings for changing name, lastname, email and password and Logout option
               },
               icon: Icon(
                 Icons.person,

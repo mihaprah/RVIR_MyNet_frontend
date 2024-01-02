@@ -61,7 +61,6 @@ class _VaultsPageState extends State<VaultsPage> {
     setState(() {
       client = clientOne;
     });
-    print("Cash balance ${clientOne.cashBalance}");
   }
 
   void getClientVaults() {
@@ -150,27 +149,6 @@ class _VaultsPageState extends State<VaultsPage> {
       print("Error: $e");
     }
   }
-
-  // Future<void> getClient(int id) async {
-  //   try {
-  //     var endPoint = "/client/$id";
-  //     var url = Uri.parse("$baseUrl$endPoint");
-  //
-  //     var response = await http.get(url);
-  //
-  //     var jsonData = json.decode(response.body);
-  //
-  //     if (response.statusCode == 200) {
-  //       client = Client.fromJson(jsonData);
-  //       setClient(client);
-  //       getClientVaults();
-  //     } else {
-  //       print('Request failed with status: ${response.statusCode}');
-  //     }
-  //   } catch(e) {
-  //     print("Error: $e");
-  //   }
-  // }
 
   Future<void> addNewVault(Vault newVault) async {
     try {
@@ -293,7 +271,7 @@ class _VaultsPageState extends State<VaultsPage> {
                                 PopupAddVault(
                                   title: "Add new vault",
                                   onSave: (String name, double goal, DateTime dueDate) {
-                                    Vault newVault = Vault(name: name, goal: goal, amount: 0.0, dueDate: dueDate, icon: "", client: client);
+                                    Vault newVault = Vault(name: name, goal: goal, amount: 0.0, dueDate: dueDate, client: client);
                                     addNewVault(newVault);
                                   },
                                 )
