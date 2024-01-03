@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
-import 'package:my_net/models/ClientProvider.dart';
+import 'package:my_net/providers/ClientProvider.dart';
 import 'package:my_net/widgets/PopupAddVault.dart';
 import 'package:my_net/widgets/PopupEditVault.dart';
 import 'package:provider/provider.dart';

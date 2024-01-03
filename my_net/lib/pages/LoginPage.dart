@@ -8,7 +8,7 @@ import 'package:my_net/models/Client.dart';
 import 'package:my_net/pages/HomePage.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ClientProvider.dart';
+import '../providers/ClientProvider.dart';
 
 var shadowDecoration = BoxDecoration(
   borderRadius: const BorderRadius.all(Radius.circular(10)),

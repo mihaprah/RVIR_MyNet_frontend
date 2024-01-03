@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_net/models/ClientProvider.dart';
+import 'package:my_net/providers/ClientProvider.dart';
 import 'package:my_net/pages/CommodityPage.dart';
 import 'package:my_net/pages/CryptoPage.dart';
 import 'package:my_net/pages/StocksPage.dart';
