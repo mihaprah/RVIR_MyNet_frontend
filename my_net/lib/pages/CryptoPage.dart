@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/models/Cryptocurrency.dart';
+import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
+import 'package:my_net/widgets/PopupAddCrypto.dart';
 import 'package:my_net/widgets/PopupEditCrypto.dart';
 import '../constants/constants.dart';
 import '../models/CryptocurrencyShare.dart';
@@ -112,6 +113,8 @@ class _CryptoPageState extends State<CryptoPage> {
   }
 
   Future<void> getClientCrypto() async {
+    clientCrypto.clear();
+    cryptoShares.clear();
     try {
       if (widget.client != null) {
         var endPoint = "/cryptocurrencyshare/all/${widget.client!.id}";
@@ -149,6 +152,114 @@ class _CryptoPageState extends State<CryptoPage> {
       cryptoShares[code] = amount;
     }
   }
+
+  Future<void> addCryptoAmount(double amount, String code) async {
+    try {
+      if (code.isNotEmpty) {
+        CryptocurrencyShare? share = getCryptoShare(code);
+        double oldAmount = getOldAmount(code);
+        double newAmount = oldAmount + amount;
+        if (share != null) {
+          UpdateAmountRequest requestBody = UpdateAmountRequest(amount: newAmount);
+          var endPoint = "/cryptocurrencyshare/updateAmount/${share.id}";
+          var url = Uri.parse("$baseUrl$endPoint");
+
+          var response = await http.put(
+            url,
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(requestBody)
+          );
+
+          if (response.statusCode == 200) {
+            getClientCrypto();
+          }
+        } else {
+          print('CryptocurrencyShare not found for code: $code');
+        }
+      } else {
+        print('Empty code provided');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  double getOldAmount(String code) {
+    if (cryptoShares.containsKey(code)) {
+      return cryptoShares[code]!;
+    } else {
+      return 0.0;
+    }
+  }
+
+  CryptocurrencyShare? getCryptoShare(String code) {
+    for (var cryptoShare in clientCrypto) {
+      if (cryptoShare.cryptocurrency.code == code) {
+        return cryptoShare;
+      }
+    }
+    return null;
+  }
+
+  Future<void> addNewCrypto(double amount, String code) async {
+    try {
+      if (code.isNotEmpty) {
+        Cryptocurrency? crypto = await getCryptoByCode(code);
+        if (crypto != null) {
+          CryptocurrencyShare share = CryptocurrencyShare(amount: amount, client: client, cryptocurrency: crypto);
+          var endPoint = "/cryptocurrencyshare/add";
+          var url = Uri.parse("$baseUrl$endPoint");
+          var response = await http.post(
+            url,
+            headers: <String, String>{
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(share)
+          );
+          if (response.statusCode == 200) {
+            getClientCrypto();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("New cryptocurrency added successfully."),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        } else {
+          print('CryptocurrencyShare not found for code: $code');
+        }
+      } else {
+        print('Empty code provided.');
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<Cryptocurrency?> getCryptoByCode(String code) async {
+    try {
+      var endPoint = "/cryptocurrency/code/$code";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.get(url);
+      var jsonData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        return Cryptocurrency.fromJson(jsonData);
+      } else {
+        print('Failed to get cryptocurrency. Status code: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+    return null;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -230,22 +341,22 @@ class _CryptoPageState extends State<CryptoPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 PopupEditCrypto(
-                                    title: "Change cryptos amount.",
+                                    title: "Change cryptos amount",
                                     cryptos: availableCryptos,
                                     onSave: (bool isAddSelected, double amount, String code) {
-                                      // TODO -> after backend fix for adding existing cryptos (it needs to update it)
-                                      // TODO -> and get crypto by code is implemented
-                                      print(isAddSelected);
-                                      print(amount);
-                                      print(code);
+                                      if (isAddSelected) {
+                                        addCryptoAmount(amount, code);
+                                      } else {
+                                        addCryptoAmount(-amount, code);
+                                      }
                                     },
                                 ),
                                 const SizedBox(width: 50),
-                                IconButton(onPressed: () {}, icon: Icon(
-                                  Icons.add,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 25,
-                                ),
+                                PopupAddCrypto(
+                                    title: "Add new Cryptocurrency",
+                                    onSave: (double amount, String code) {
+                                      addNewCrypto(amount, code);
+                                    },
                                 )
                               ],
                             ),

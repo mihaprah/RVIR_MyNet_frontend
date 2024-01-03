@@ -28,10 +28,22 @@ class _PopupEditVaultState extends State<PopupEditVault> {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        _showPopup(context, widget.title);
-        setState(() {
-          selectedVaultId = widget.vaults[0].id!;
-        });
+        if (widget.vaults.isNotEmpty) {
+          _showPopup(context, widget.title);
+          setState(() {
+            selectedVaultId = widget.vaults[0].id!;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("No vaults created."),
+              duration: Duration(seconds: 3),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+
         },
       icon: Icon(
         Icons.edit,

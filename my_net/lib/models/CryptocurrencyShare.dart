@@ -2,13 +2,13 @@ import 'Client.dart';
 import 'Cryptocurrency.dart';
 
 class CryptocurrencyShare {
-  final int id;
+  final int? id;
   final double amount;
   final Client client;
   final Cryptocurrency cryptocurrency;
 
   CryptocurrencyShare({
-    required this.id,
+    this.id,
     required this.amount,
     required this.client,
     required this.cryptocurrency,

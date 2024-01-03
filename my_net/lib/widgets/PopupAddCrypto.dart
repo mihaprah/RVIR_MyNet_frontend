@@ -1,52 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/Vault.dart';
 
-class PopupEditCrypto extends StatefulWidget {
-  final Function(bool, double, String)? onSave;
+class PopupAddCrypto extends StatefulWidget {
+  final Function(double, String)? onSave;
   final String title;
-  final List<String> cryptos;
 
-  const PopupEditCrypto({
+  const PopupAddCrypto({
     Key? key,
     this.onSave,
-    required this.title,
-    required this.cryptos
+    required this.title
   }) : super(key: key);
 
   @override
-  _PopupEditCryptoState createState() => _PopupEditCryptoState();
+  _PopupAddCryptoState createState() => _PopupAddCryptoState();
 }
 
-class _PopupEditCryptoState extends State<PopupEditCrypto> {
-  bool isAddSelected = true;
+class _PopupAddCryptoState extends State<PopupAddCrypto> {
   double amount = 0;
-  String selectedCrypto = "";
+  String selectedCrypto = "ETH";
+  final List<String> cryptos = ["ETH", "BTC", "BNB"];
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        if (widget.cryptos.isNotEmpty) {
           _showPopup(context, widget.title);
-          setState(() {
-            selectedCrypto = widget.cryptos[0];
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("No cryptocurrencies added."),
-              duration: Duration(seconds: 3),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-
       },
       icon: Icon(
-        Icons.edit,
+        Icons.add,
         color: Theme.of(context).primaryColor,
         size: 25,
       ),
@@ -54,7 +36,7 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
   }
 
   List<DropdownMenuItem<String>> buildDropdownMenuItems() {
-    return widget.cryptos.map((crypto) {
+    return cryptos.map((crypto) {
       return DropdownMenuItem<String>(
         value: crypto,
         child: Text(crypto),
@@ -73,33 +55,6 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isAddSelected = true;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isAddSelected ? Colors.green : Theme.of(context).primaryColor,
-                        ),
-                        child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isAddSelected = false;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: !isAddSelected ? Colors.red : Theme.of(context).primaryColor,
-                        ),
-                        child: const Text('Remove', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 10),
                   DropdownButton<String>(
                     value: selectedCrypto,
@@ -141,9 +96,8 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
                   onPressed: () {
                     if (widget.onSave != null){
                       if( amount != 0.0) {
-                        widget.onSave!(isAddSelected, amount, selectedCrypto);
+                        widget.onSave!(amount, selectedCrypto);
                         amount = 0.0;
-                        isAddSelected = true;
                         Navigator.of(context).pop();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

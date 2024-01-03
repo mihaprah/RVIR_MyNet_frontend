@@ -166,6 +166,15 @@ class _VaultsPageState extends State<VaultsPage> {
       if (response.statusCode == 200) {
         fetchClient();
         getClientVaults();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Vault added successfully."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       } else {
         print('Request failed with status: ${response.statusCode}');
       }
