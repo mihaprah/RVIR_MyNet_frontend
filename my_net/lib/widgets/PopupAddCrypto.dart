@@ -19,7 +19,7 @@ class PopupAddCrypto extends StatefulWidget {
 class _PopupAddCryptoState extends State<PopupAddCrypto> {
   double amount = 0;
   String selectedCrypto = "ETH";
-  final List<String> cryptos = ["ETH", "BTC", "BNB"];
+  final List<String> cryptos = ["ETH", "BTC", "SOL"];
 
   @override
   Widget build(BuildContext context) {

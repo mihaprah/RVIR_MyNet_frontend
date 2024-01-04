@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/models/CryptoApiResponse.dart';
 import 'package:my_net/models/Cryptocurrency.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
+import 'package:my_net/providers/CryptoProvider.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
 import 'package:my_net/widgets/PopupAddCrypto.dart';
 import 'package:my_net/widgets/PopupEditCrypto.dart';
+import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../widgets/CustomAppBar.dart';
@@ -35,9 +38,12 @@ class _CryptoPageState extends State<CryptoPage> {
   List<CryptocurrencyShare> clientCrypto = [];
   String selectedCrypto = 'ETH';
   List<String> availableCryptos = [];
-
-  double maxValueEtherium = 5000;
-  double maxValueBitcoin = 60000;
+  List<CryptoApiResponse> bitcoinResponse = [];
+  List<CryptoApiResponse> etheriumResponse = [];
+  List<CryptoApiResponse> solanaResponse = [];
+  double bitcoinValue = 0.0;
+  double etheriumValue = 0.0;
+  double solanaValue = 0.0;
 
   Map<String, List<FlSpot>> cryptoData = {
     'ETH': [
@@ -68,7 +74,7 @@ class _CryptoPageState extends State<CryptoPage> {
       FlSpot(10, 34567),
       FlSpot(11, 49040),
     ],
-    'BNB': [
+    'SOL': [
       FlSpot(0, 20000),
       FlSpot(1, 22000),
       // Add more data points for BNB...
@@ -78,7 +84,7 @@ class _CryptoPageState extends State<CryptoPage> {
   Map<String, double> cryptoMaxValues = {
     'ETH': 5000,
     'BTC': 60000,
-    'BNB': 25000,
+    'SOL': 25000,
   };
 
   @override
@@ -86,6 +92,22 @@ class _CryptoPageState extends State<CryptoPage> {
     super.initState();
     setClient(widget.client!);
     fetchClient();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      fetchCryptoPrices();
+    });
+  }
+
+  void fetchCryptoPrices() {
+      CryptoProvider cryptoProvider = Provider.of<CryptoProvider>(context, listen: false);
+      bitcoinResponse = cryptoProvider.bitcoinList;
+      etheriumResponse = cryptoProvider.etheriumList;
+      solanaResponse = cryptoProvider.solanaList;
+
+      setState(() {
+        bitcoinValue = bitcoinResponse[bitcoinResponse.length - 1].c;
+        etheriumValue = etheriumResponse[etheriumResponse.length -1].c;
+        solanaValue = solanaResponse[solanaResponse.length - 1].c;
+      });
   }
 
   Future<void> fetchClient() async {
@@ -407,15 +429,19 @@ class _CryptoPageState extends State<CryptoPage> {
                                   final cryptoCode = crypto.key;
                                   String cryptoName = "";
                                   final shares = crypto.value;
+                                  double currentPrice = 0.0;
                                   final completion = 0.0;
                                   final percentage = ((completion * 100).round()).toInt();
 
                                   if (cryptoCode == "ETH") {
                                     cryptoName = "Etherium";
+                                    currentPrice = etheriumValue;
                                   } else if (cryptoCode == "BTC") {
                                     cryptoName = "Bitcoin";
+                                    currentPrice = bitcoinValue;
                                   } else {
-                                    cryptoName = "Binance coin";
+                                    cryptoName = "Solana";
+                                    currentPrice = solanaValue;
                                   }
 
                                   return GestureDetector(
@@ -483,7 +509,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "$shares $cryptoCode \u2022 20000.00 €",
+                                                      "$shares $cryptoCode \u2022 $currentPrice €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 12,

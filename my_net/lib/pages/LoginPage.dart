@@ -6,6 +6,7 @@ import 'package:my_net/models/LoginRequest.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/pages/HomePage.dart';
+import 'package:my_net/services/crypto_stock_api.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/ClientProvider.dart';
@@ -55,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         Client client = Client.fromJson(jsonData);
+        setGlobalCrypto();
         setGlobalClient(client);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +87,12 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return true;
     }
+  }
+
+  void setGlobalCrypto() {
+    CryptoStockApiService().getYearlyCrypto("BTC", context);
+    CryptoStockApiService().getYearlyCrypto("ETH", context);
+    CryptoStockApiService().getYearlyCrypto("SOL", context);
   }
 
   void setGlobalClient(Client client) {
