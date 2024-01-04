@@ -7,8 +7,10 @@ import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/widgets/PopupEditCashBalance.dart';
+import 'package:provider/provider.dart';
 import '../models/CryptocurrencyShare.dart';
 import '../models/Vault.dart';
+import '../providers/CryptoProvider.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,6 +32,10 @@ class _HomePageState extends State<HomePage> {
   double cashBalance = 0.0;
   double vaultsSum = 0.0;
   double netWorth = 0.0;
+  double cryptoSum = 0.0;
+  double bitcoinValue = 0.0;
+  double etheriumValue = 0.0;
+  double solanaValue = 0.0;
   Map<String, double> cryptoShares = {};
   Map<String, double> stocksShares = {};
   Map<String, double> commoditiesShares = {};
@@ -51,6 +57,24 @@ class _HomePageState extends State<HomePage> {
     });
     getClientCashBalance();
     getClientVaults();
+    calculateNetWorth();
+  }
+
+  void calculateCryptoSum() {
+    CryptoProvider cryptoProvider = Provider.of<CryptoProvider>(context, listen: false);
+    double temp = 0.0;
+    cryptoShares.forEach((code, amount) {
+      if (code == "ETH") {
+        temp += amount * cryptoProvider.etheriumList[cryptoProvider.etheriumList.length -1].c;
+      } else if (code == "BTC") {
+        temp += amount * cryptoProvider.bitcoinList[cryptoProvider.bitcoinList.length -1].c;
+      } else {
+        temp += amount * cryptoProvider.solanaList[cryptoProvider.solanaList.length - 1].c;
+      }
+    });
+    setState(() {
+      cryptoSum = temp;
+    });
     calculateNetWorth();
   }
 
@@ -103,6 +127,7 @@ class _HomePageState extends State<HomePage> {
           for (var crypto in clientCryptos) {
             addOrUpdateCryptoShare(crypto.cryptocurrency.code, crypto.amount);
           }
+          calculateCryptoSum();
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -193,7 +218,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
   void calculateNetWorth(){
-    double temp = vaultsSum + cashBalance;
+    double temp = vaultsSum + cashBalance + cryptoSum;
     temp = double.parse(temp.toStringAsFixed(2));
 
     setState(() {
@@ -487,9 +512,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: cryptoShares.isNotEmpty
-                                            ? 'tba €'
-                                            : 'Loading ...',
+                                        text: "${cryptoSum.toStringAsFixed(2)} €",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25,
