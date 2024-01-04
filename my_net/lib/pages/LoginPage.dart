@@ -5,7 +5,7 @@ import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/LoginRequest.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_net/models/Client.dart';
-import 'package:my_net/pages/HomePage.dart';
+import 'package:my_net/pages/LoadingPage.dart';
 import 'package:my_net/services/crypto_stock_api.dart';
 import 'package:provider/provider.dart';
 
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HomePage(client: client,),
+        builder: (context) => LoadingPage(client: client,),
       ),
     );
   }

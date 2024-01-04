@@ -155,7 +155,9 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
       ),
       body: Center(
           child: vault == null // Display loading indicator if vault is null
-              ? const CircularProgressIndicator()
+              ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  )
               : SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: SingleChildScrollView(
