@@ -90,8 +90,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void setGlobalCrypto() {
-    CryptoStockApiService().getYearlyCrypto("BTC", context);
     CryptoStockApiService().getYearlyCrypto("ETH", context);
+    CryptoStockApiService().getYearlyCrypto("BTC", context);
     CryptoStockApiService().getYearlyCrypto("SOL", context);
   }
 

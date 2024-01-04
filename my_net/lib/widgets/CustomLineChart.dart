@@ -18,9 +18,9 @@ class CustomLineChart extends StatelessWidget {
       aspectRatio: 1.70,
       child: Padding(
           padding: const EdgeInsets.only(
-            right: 18,
-            left: 12,
-            top: 24,
+            right: 10,
+            left: 10,
+            top: 20,
             bottom: 12,
           ),
           child: AspectRatio(

@@ -45,47 +45,8 @@ class _CryptoPageState extends State<CryptoPage> {
   double etheriumValue = 0.0;
   double solanaValue = 0.0;
 
-  Map<String, List<FlSpot>> cryptoData = {
-    'ETH': [
-      FlSpot(0, 2000),
-      FlSpot(1, 3400),
-      FlSpot(2, 2600),
-      FlSpot(3, 1600),
-      FlSpot(4, 3000),
-      FlSpot(5, 4200),
-      FlSpot(6, 4800),
-      FlSpot(7, 4865),
-      FlSpot(8, 4835),
-      FlSpot(9, 4634),
-      FlSpot(10, 3567),
-      FlSpot(11, 4040),
-    ],
-    'BTC': [
-      FlSpot(0, 30000),
-      FlSpot(1, 34000),
-      FlSpot(2, 26000),
-      FlSpot(3, 16000),
-      FlSpot(4, 30000),
-      FlSpot(5, 42000),
-      FlSpot(6, 48000),
-      FlSpot(7, 48565),
-      FlSpot(8, 48635),
-      FlSpot(9, 46834),
-      FlSpot(10, 34567),
-      FlSpot(11, 49040),
-    ],
-    'SOL': [
-      FlSpot(0, 20000),
-      FlSpot(1, 22000),
-      // Add more data points for BNB...
-    ],
-  };
-
-  Map<String, double> cryptoMaxValues = {
-    'ETH': 5000,
-    'BTC': 60000,
-    'SOL': 25000,
-  };
+  Map<String, List<FlSpot>> cryptoData = {};
+  Map<String, double> cryptoMaxValues = {};
 
   @override
   void initState() {
@@ -107,7 +68,71 @@ class _CryptoPageState extends State<CryptoPage> {
         bitcoinValue = bitcoinResponse[bitcoinResponse.length - 1].c;
         etheriumValue = etheriumResponse[etheriumResponse.length -1].c;
         solanaValue = solanaResponse[solanaResponse.length - 1].c;
+        cryptoMaxValues = cryptoProvider.cryptoMaxValues;
+        cryptoData = {
+          "ETH": cryptoProvider.getYearChartData(etheriumResponse),
+          "BTC": cryptoProvider.getYearChartData(bitcoinResponse),
+          "SOL": cryptoProvider.getYearChartData(solanaResponse),
+        };
       });
+  }
+
+
+  void calculateCryptoSum() {
+    double temp = 0.0;
+    cryptoShares.forEach((code, amount) {
+      if (code == "ETH") {
+        temp += amount * etheriumValue;
+      } else if (code == "BTC") {
+        temp += amount * bitcoinValue;
+      } else {
+        temp += amount * solanaValue;
+      }
+    });
+    setState(() {
+      cryptoSum = temp;
+    });
+  }
+
+  void checkForEmptyCrypto() {
+    cryptoShares.forEach((code, amount) {
+      if (amount == 0.0) {
+        deleteShare(code);
+      }
+    });
+    cryptoShares.removeWhere((code, amount) => amount == 0.0);
+  }
+
+  Future<void> deleteShare(String code) async {
+    print("Here");
+    int id = 0;
+    clientCrypto.forEach((element) {
+      if (element.cryptocurrency.code == code) {
+        id = element.id!;
+      }
+    });
+
+    try {
+    if (id != 0) {
+      var endPoint = "/cryptocurrencyshare/delete/$id";
+      var url = Uri.parse("$baseUrl$endPoint");
+
+      var response = await http.delete(url);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Cryptocurrency removed successfully."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+    } catch (e) {
+      print("Error: $e");
+    }
+
   }
 
   Future<void> fetchClient() async {
@@ -158,6 +183,8 @@ class _CryptoPageState extends State<CryptoPage> {
             clientCrypto = clientCryptos;
             availableCryptos = cryptoShares.keys.toList();
           });
+          checkForEmptyCrypto();
+          calculateCryptoSum();
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -181,6 +208,17 @@ class _CryptoPageState extends State<CryptoPage> {
         CryptocurrencyShare? share = getCryptoShare(code);
         double oldAmount = getOldAmount(code);
         double newAmount = oldAmount + amount;
+        if (newAmount < 0.0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("You do not have that much of ${code}."),
+              duration: Duration(seconds: 3),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          return;
+        }
         if (share != null) {
           UpdateAmountRequest requestBody = UpdateAmountRequest(amount: newAmount);
           var endPoint = "/cryptocurrencyshare/updateAmount/${share.id}";
@@ -196,6 +234,14 @@ class _CryptoPageState extends State<CryptoPage> {
 
           if (response.statusCode == 200) {
             getClientCrypto();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Cryptocurrency amount updated successfully."),
+                duration: Duration(seconds: 3),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
           }
         } else {
           print('CryptocurrencyShare not found for code: $code');
@@ -351,7 +397,7 @@ class _CryptoPageState extends State<CryptoPage> {
                           const SizedBox(
                             height: 2,
                           ),
-                          Text( "$cryptoSum €",
+                          Text( "${cryptoSum.toStringAsFixed(2)} €",
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 25,
@@ -430,8 +476,6 @@ class _CryptoPageState extends State<CryptoPage> {
                                   String cryptoName = "";
                                   final shares = crypto.value;
                                   double currentPrice = 0.0;
-                                  final completion = 0.0;
-                                  final percentage = ((completion * 100).round()).toInt();
 
                                   if (cryptoCode == "ETH") {
                                     cryptoName = "Etherium";
@@ -443,6 +487,9 @@ class _CryptoPageState extends State<CryptoPage> {
                                     cryptoName = "Solana";
                                     currentPrice = solanaValue;
                                   }
+
+                                  final completion = (shares*currentPrice)/cryptoSum;
+                                  final percentage = ((completion * 100).round()).toInt();
 
                                   return GestureDetector(
                                     onTap: () async {
@@ -501,7 +548,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "100.00 €",
+                                                      "${(shares * currentPrice).toStringAsFixed(2)} €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 20,
@@ -542,7 +589,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                 Center(
                                                   child: CircularProgressIndicator(
                                                     strokeWidth: 4,
-                                                    value: 0.33,
+                                                    value: completion,
                                                     valueColor:
                                                     AlwaysStoppedAnimation<Color>(
                                                         Theme.of(context)
@@ -616,7 +663,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                       });
                                     }
                                   },
-                                  items: <String>['ETH', 'BTC', 'BNB'].map<DropdownMenuItem<String>>((String value) {
+                                  items: <String>['ETH', 'BTC', 'SOL'].map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
@@ -632,7 +679,12 @@ class _CryptoPageState extends State<CryptoPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 const SizedBox(width: 20,),
-                                const Text("2365.56 €", style: TextStyle(fontWeight: FontWeight.bold),),
+                                if (selectedCrypto == "BTC")
+                                  Text("$bitcoinValue €", style: const TextStyle(fontWeight: FontWeight.bold))
+                                else if (selectedCrypto == "ETH")
+                                  Text("$etheriumValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                else if (selectedCrypto == "SOL")
+                                  Text("$solanaValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
                               ],
                             ),
                             CustomLineChart(
