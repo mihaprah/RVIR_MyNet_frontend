@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
-import 'package:my_net/models/CryptoApiResponse.dart';
+import 'package:my_net/models/PolygonApiResponse.dart';
 import 'package:my_net/models/Cryptocurrency.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/providers/CryptoProvider.dart';
@@ -31,22 +31,21 @@ class CryptoPage extends StatefulWidget {
 
 class _CryptoPageState extends State<CryptoPage> {
   String currentScreen = '/crypto';
-  late Client currentClient;
   double cryptoSum = 0.0;
   late Client client;
   Map<String, double> cryptoShares = {};
-  List<CryptocurrencyShare> clientCrypto = [];
+  List<CryptocurrencyShare> clientCryptoRaw = [];
   String selectedCrypto = 'ETH';
   List<String> availableCryptos = [];
-  List<CryptoApiResponse> bitcoinResponse = [];
-  List<CryptoApiResponse> etheriumResponse = [];
-  List<CryptoApiResponse> solanaResponse = [];
+  List<PolygonApiResponse> bitcoinResponse = [];
+  List<PolygonApiResponse> etheriumResponse = [];
+  List<PolygonApiResponse> solanaResponse = [];
   double bitcoinValue = 0.0;
   double etheriumValue = 0.0;
   double solanaValue = 0.0;
 
-  Map<String, List<FlSpot>> cryptoData = {};
-  Map<String, double> cryptoMaxValues = {};
+  Map<String, List<FlSpot>> cryptoChartData = {};
+  Map<String, double> cryptoChartMaxValues = {};
 
   @override
   void initState() {
@@ -68,8 +67,8 @@ class _CryptoPageState extends State<CryptoPage> {
         bitcoinValue = bitcoinResponse[bitcoinResponse.length - 1].c;
         etheriumValue = etheriumResponse[etheriumResponse.length -1].c;
         solanaValue = solanaResponse[solanaResponse.length - 1].c;
-        cryptoMaxValues = cryptoProvider.cryptoMaxValues;
-        cryptoData = {
+        cryptoChartMaxValues = cryptoProvider.cryptoMaxValues;
+        cryptoChartData = {
           "ETH": cryptoProvider.getYearChartData(etheriumResponse),
           "BTC": cryptoProvider.getYearChartData(bitcoinResponse),
           "SOL": cryptoProvider.getYearChartData(solanaResponse),
@@ -104,9 +103,8 @@ class _CryptoPageState extends State<CryptoPage> {
   }
 
   Future<void> deleteShare(String code) async {
-    print("Here");
     int id = 0;
-    clientCrypto.forEach((element) {
+    clientCryptoRaw.forEach((element) {
       if (element.cryptocurrency.code == code) {
         id = element.id!;
       }
@@ -120,9 +118,9 @@ class _CryptoPageState extends State<CryptoPage> {
       var response = await http.delete(url);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Cryptocurrency removed successfully."),
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text("$code cryptocurrency removed successfully."),
+            duration: const Duration(seconds: 3),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
@@ -160,7 +158,7 @@ class _CryptoPageState extends State<CryptoPage> {
   }
 
   Future<void> getClientCrypto() async {
-    clientCrypto.clear();
+    clientCryptoRaw.clear();
     cryptoShares.clear();
     try {
       if (widget.client != null) {
@@ -180,7 +178,7 @@ class _CryptoPageState extends State<CryptoPage> {
             });
           }
           setState(() {
-            clientCrypto = clientCryptos;
+            clientCryptoRaw = clientCryptos;
             availableCryptos = cryptoShares.keys.toList();
           });
           checkForEmptyCrypto();
@@ -212,7 +210,7 @@ class _CryptoPageState extends State<CryptoPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("You do not have that much of ${code}."),
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
             ),
@@ -235,9 +233,9 @@ class _CryptoPageState extends State<CryptoPage> {
           if (response.statusCode == 200) {
             getClientCrypto();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Cryptocurrency amount updated successfully."),
-                duration: Duration(seconds: 3),
+              SnackBar(
+                content: Text("$code cryptocurrency amount updated successfully."),
+                duration: const Duration(seconds: 3),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -263,7 +261,7 @@ class _CryptoPageState extends State<CryptoPage> {
   }
 
   CryptocurrencyShare? getCryptoShare(String code) {
-    for (var cryptoShare in clientCrypto) {
+    for (var cryptoShare in clientCryptoRaw) {
       if (cryptoShare.cryptocurrency.code == code) {
         return cryptoShare;
       }
@@ -289,9 +287,9 @@ class _CryptoPageState extends State<CryptoPage> {
           if (response.statusCode == 200) {
             getClientCrypto();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("New cryptocurrency added successfully."),
-                duration: Duration(seconds: 3),
+              SnackBar(
+                content: Text("New $code cryptocurrency added successfully."),
+                duration: const Duration(seconds: 3),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -688,8 +686,8 @@ class _CryptoPageState extends State<CryptoPage> {
                               ],
                             ),
                             CustomLineChart(
-                              dataSpots: cryptoData[selectedCrypto] ?? [],
-                              maxValue: cryptoMaxValues[selectedCrypto] ?? 0.0,
+                              dataSpots: cryptoChartData[selectedCrypto] ?? [],
+                              maxValue: cryptoChartMaxValues[selectedCrypto] ?? 0.0,
                             )
                           ],
                         )

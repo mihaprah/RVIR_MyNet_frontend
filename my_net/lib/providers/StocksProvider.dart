@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 
 import '../models/PolygonApiResponse.dart';
 
-class CryptoProvider extends ChangeNotifier {
-  List<PolygonApiResponse> _bitcoinList = [];
-  List<PolygonApiResponse> _solanaList = [];
-  List<PolygonApiResponse> _etheriumList = [];
-  Map<String, double> _cryptoMaxValues = {};
+class StocksProvider extends ChangeNotifier {
+  List<PolygonApiResponse> _appleList = [];
+  List<PolygonApiResponse> _teslaList = [];
+  List<PolygonApiResponse> _microsoftList = [];
+  Map<String, double> _stocksMaxValues = {};
 
-  List<PolygonApiResponse> get bitcoinList => _bitcoinList;
-  List<PolygonApiResponse> get solanaList => _solanaList;
-  List<PolygonApiResponse> get etheriumList => _etheriumList;
-  Map<String, double> get cryptoMaxValues => _cryptoMaxValues;
+  List<PolygonApiResponse> get appleList => _appleList;
+  List<PolygonApiResponse> get teslaList => _teslaList;
+  List<PolygonApiResponse> get microsoftList => _microsoftList;
+  Map<String, double> get stocksMaxValues => _stocksMaxValues;
 
   void setYearlyList(List<PolygonApiResponse> list, String code) {
-    if (code == "ETH") {
-      _etheriumList = list;
-    } else if (code == "BTC") {
-      _bitcoinList = list;
+    if (code == "MSFT") {
+      _microsoftList = list;
+    } else if (code == "AAPL") {
+      _appleList = list;
     } else {
-      _solanaList = list;
+      _teslaList = list;
     }
     setMaximumValues(list, code);
   }
@@ -32,7 +32,7 @@ class CryptoProvider extends ChangeNotifier {
         maxAmount = element.c;
       }
     });
-    _cryptoMaxValues[code] = (maxAmount*1.2).toInt().toDouble();
+    _stocksMaxValues[code] = (maxAmount*1.2).toInt().toDouble();
   }
 
   List<FlSpot> getYearChartData(List<PolygonApiResponse> list) {
@@ -40,12 +40,12 @@ class CryptoProvider extends ChangeNotifier {
     double monthlyAverage = 0.0;
     int count = 0;
 
-    for (int i = 0; i < 366; i++) {
+    for (int i = 0; i < 252; i++) {
       monthlyAverage += list[i].c;
       count++;
 
-      if ((i + 1) % 30 == 0) {
-        int monthIndex = ((i + 1) / 30).floor() - 1;
+      if ((i + 1) % 21 == 0) {
+        int monthIndex = ((i + 1) / 21).floor() - 1;
         monthlyList.add(FlSpot(monthIndex.toDouble(), (monthlyAverage / count)));
         monthlyAverage = 0.0;
         count = 0;

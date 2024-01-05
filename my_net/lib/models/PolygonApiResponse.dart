@@ -1,4 +1,4 @@
-class CryptoApiResponse {
+class PolygonApiResponse {
   final double c;
   final double h;
   final double l;
@@ -8,7 +8,7 @@ class CryptoApiResponse {
   final double v;
   final double vw;
 
-  CryptoApiResponse({
+  PolygonApiResponse({
     required this.c,
     required this.h,
     required this.l,
@@ -19,8 +19,8 @@ class CryptoApiResponse {
     required this.vw,
   });
 
-  factory CryptoApiResponse.fromJson(Map<String, dynamic> json) {
-    return CryptoApiResponse(
+  factory PolygonApiResponse.fromJson(Map<String, dynamic> json) {
+    return PolygonApiResponse(
         c: (json['c'] as num).toDouble(),
         h: (json['h'] as num).toDouble(),
         l: (json['l'] as num).toDouble(),

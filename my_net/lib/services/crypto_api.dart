@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:my_net/models/CryptoApiResponse.dart';
+import 'package:my_net/models/PolygonApiResponse.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/CryptoProvider.dart';
 
-class CryptoStockApiService {
-  final String apiKey = "BwrD3yvvWwm_VnpqgjVVt5TyRn5WI1LI";
+class CryptoApiService {
+  final String apiKeyCrypto = "BwrD3yvvWwm_VnpqgjVVt5TyRn5WI1LI";
 
   Future<void> getYearlyCrypto(String code, BuildContext context) async {
     try {
@@ -20,12 +20,12 @@ class CryptoStockApiService {
       String symbol = "X:${code}USD";
 
       final Uri uri = Uri.parse(
-          'https://api.polygon.io/v2/aggs/ticker/$symbol/range/1/day/$startDate/$endDate?apiKey=$apiKey');
+          'https://api.polygon.io/v2/aggs/ticker/$symbol/range/1/day/$startDate/$endDate?apiKey=$apiKeyCrypto');
       final response = await http.get(uri);
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        final List<CryptoApiResponse> results = (responseData['results'] as List<dynamic>)
-            .map((data) => CryptoApiResponse.fromJson(data))
+        final List<PolygonApiResponse> results = (responseData['results'] as List<dynamic>)
+            .map((data) => PolygonApiResponse.fromJson(data))
             .toList();
 
         if (results.isNotEmpty) {
@@ -33,10 +33,10 @@ class CryptoStockApiService {
         }
 
       } else {
-        print('Error 1: ${response.reasonPhrase}');
+        print('Error Crypto 1: ${response.reasonPhrase}');
       }
     } catch (error) {
-      print('Error 2: $error');
+      print('Error Crypto 2: $error');
     }
 
   }

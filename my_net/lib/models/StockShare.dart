@@ -2,13 +2,13 @@ import 'Client.dart';
 import 'Stock.dart';
 
 class StockShare {
-  final int id;
+  final int? id;
   final double amount;
   final Client client;
   final Stock stock;
 
   StockShare({
-    required this.id,
+    this.id,
     required this.amount,
     required this.client,
     required this.stock,
