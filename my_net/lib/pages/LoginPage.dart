@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text(
           'Login',
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(fontSize: 25, color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                         Theme.of(context).primaryColor,
                       ),
                     ),
-                    child: const Text('Login'),
+                    child: const Text('Login', style: TextStyle(color: Colors.white),),
                   ),
                   const SizedBox(height: 16),
                   TextButton(

@@ -194,7 +194,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: const Text(
           'Register',
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(fontSize: 25, color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
@@ -289,7 +289,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Theme.of(context).primaryColor,
                   ),
                 ),
-                child: const Text('Create new account'),
+                child: const Text('Create new account', style: TextStyle(color: Colors.white),),
               ),
               TextButton(
                 onPressed: () {

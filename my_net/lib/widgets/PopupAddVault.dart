@@ -100,7 +100,7 @@ class _PopupAddVaultState extends State<PopupAddVault> {
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor, elevation: 5),
-                        child: const Text("Change the date",  style: TextStyle(fontWeight: FontWeight.bold))),
+                        child: const Text("Change the date",  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
                  if (dueDate == null)
                     ElevatedButton(
                         onPressed: () async {
@@ -115,7 +115,7 @@ class _PopupAddVaultState extends State<PopupAddVault> {
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor, elevation: 5),
-                        child: const Text("Set a vault date")),
+                        child: const Text("Set a vault date", style: TextStyle(color: Colors.white),)),
                 ],
               ),
               actions: <Widget>[

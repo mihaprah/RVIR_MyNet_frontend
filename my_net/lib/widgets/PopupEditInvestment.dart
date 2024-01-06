@@ -86,7 +86,7 @@ class _PopupEditInvestmentState extends State<PopupEditInvestment> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isAddSelected ? Colors.green : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -97,7 +97,7 @@ class _PopupEditInvestmentState extends State<PopupEditInvestment> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: !isAddSelected ? Colors.red : Theme.of(context).primaryColor,
                         ),
-                        child: const Text('Remove', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text('Remove', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                       ),
                     ],
                   ),

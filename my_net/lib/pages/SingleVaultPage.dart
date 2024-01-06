@@ -150,11 +150,12 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vault Details'),
+        title: const Text('Vault Details', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
         backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
-          child: vault == null // Display loading indicator if vault is null
+          child: vault == null
               ? CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                   )
@@ -260,7 +261,7 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                                 Theme.of(context).primaryColor,
                               ),
                             ),
-                            child: const Text('Save changes'),
+                            child: const Text('Save changes', style: TextStyle(color: Colors.white),),
                           ),
                           const SizedBox(height: 16),
                           PopupDeleteVault(
