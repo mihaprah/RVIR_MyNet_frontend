@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
 
+import '../widgets/SlowLoadingBar.dart';
 import 'HomePage.dart';
 
 class LoadingPage extends StatelessWidget {
@@ -9,16 +9,16 @@ class LoadingPage extends StatelessWidget {
 
   const LoadingPage({
     required this.client,
-    super.key});
+    Key? key, // Fix the syntax error here
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-    Future.delayed(const Duration(milliseconds: 4500), () {
+    Future.delayed(const Duration(milliseconds: 5500), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(client: client,),
+          builder: (context) => HomePage(client: client),
         ),
       );
     });
@@ -32,14 +32,12 @@ class LoadingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              'Taking you to your number one net worth managing page.',
+              'Taking you to your number one net worth managing app.',
               style: TextStyle(fontSize: 25),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10,),
-            CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
-            )
+            SlowLoadingBar(duration: 5500),
           ],
         ),
       ),

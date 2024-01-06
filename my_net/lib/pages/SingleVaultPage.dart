@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:my_net/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_net/widgets/PopupDeleteVault.dart';
+import 'package:my_net/widgets/SlowLoadingBar.dart';
 
 import '../models/Vault.dart';
 import 'LoginPage.dart';
@@ -156,9 +157,7 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
       ),
       body: Center(
           child: vault == null
-              ? CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-                  )
+              ? SlowLoadingBar(duration: 1100,)
               : SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: SingleChildScrollView(
@@ -178,7 +177,8 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                                   labelText: 'Vault name',
                                   filled: true,
                                   fillColor: Colors.white,
-                                  border: InputBorder.none),
+                                  border: InputBorder.none
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -204,7 +204,7 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                                 if (picked != null && picked != dueDate) {
                                   setState(() {
                                     dueDate = picked;
-                                    _dueDateEditingController.text = DateFormat('yyyy-MM-dd').format(dueDate!); // Format the date
+                                    _dueDateEditingController.text = DateFormat('yyyy-MM-dd').format(dueDate!);
                                   });
                                 }
                               },
@@ -223,7 +223,8 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                                   labelText: 'Goal due date',
                                   filled: true,
                                   fillColor: Colors.white,
-                                  border: InputBorder.none),
+                                  border: InputBorder.none
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -236,7 +237,8 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                                   labelText: 'Amount',
                                   filled: true,
                                   fillColor: Colors.white,
-                                  border: InputBorder.none),
+                                  border: InputBorder.none
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -244,10 +246,10 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                           const SizedBox(height: 16),
                           SizedBox(
                             width: 400,
-                            height: 10,// Set the width of the progress bar container
+                            height: 10,
                             child: LinearProgressIndicator(
-                              value: completion, // Set the progress value to 67% (0.0 to 1.0)
-                              backgroundColor: Colors.white70, // Set the background color of the progress bar
+                              value: completion,
+                              backgroundColor: Colors.white70,
                               valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                             ),
                           ),
@@ -277,7 +279,8 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
                       ),
                     ),
                   ),
-                )),
+                )
+      ),
     );
   }
 }

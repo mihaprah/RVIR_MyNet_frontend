@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:my_net/pages/UserPage.dart';
 
 import '../pages/CommodityPage.dart';
 import '../pages/CryptoPage.dart';
@@ -27,7 +28,7 @@ class AppRoutes {
       AppRoutes.crypto: (context) => CryptoPage(),
       AppRoutes.commodities: (context) => CommodityPage(),
       AppRoutes.stocks: (context) => StocksPage(),
-      // Add other routes as needed
+      AppRoutes.user: (context) => UserPage()
     };
   }
 }

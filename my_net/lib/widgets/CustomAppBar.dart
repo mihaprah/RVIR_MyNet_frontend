@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:my_net/models/Client.dart';
+import 'package:my_net/pages/UserPage.dart';
 import 'package:my_net/providers/ClientProvider.dart';
 import 'package:my_net/pages/CommodityPage.dart';
 import 'package:my_net/pages/CryptoPage.dart';
@@ -70,9 +71,17 @@ class _CustomAppBarState extends State<CustomAppBar>{
               ),
             ),
             IconButton(
-              onPressed: () {
-                // Handle the action when the person icon is pressed
-              //   TODO -> UserPage with settings for changing name, lastname, email and password and Logout option
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserPage(id: currentClient.id,),
+                  ),
+                );
+
+                if (result == null) {
+
+                }
               },
               icon: Icon(
                 Icons.person,
