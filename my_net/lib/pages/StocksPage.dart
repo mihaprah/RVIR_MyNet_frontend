@@ -10,7 +10,7 @@ import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/providers/StocksProvider.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
 import 'package:my_net/widgets/PopupAddInvestment.dart';
-import 'package:my_net/widgets/PopupEditCrypto.dart';
+import 'package:my_net/widgets/PopupEditInvestment.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../widgets/CustomAppBar.dart';
@@ -406,7 +406,7 @@ class _StocksPageState extends State<StocksPage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  PopupEditCrypto(
+                                  PopupEditInvestment(
                                     title: "Change cryptos amount",
                                     options: availableStocks,
                                     errorMessage: "No stocks added.",

@@ -6,6 +6,7 @@ import 'package:my_net/models/Client.dart';
 import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
+import 'package:my_net/providers/StocksProvider.dart';
 import 'package:my_net/widgets/PopupEditCashBalance.dart';
 import 'package:provider/provider.dart';
 import '../models/CryptocurrencyShare.dart';
@@ -33,9 +34,7 @@ class _HomePageState extends State<HomePage> {
   double vaultsSum = 0.0;
   double netWorth = 0.0;
   double cryptoSum = 0.0;
-  double bitcoinValue = 0.0;
-  double etheriumValue = 0.0;
-  double solanaValue = 0.0;
+  double stocksSum = 0.0;
   Map<String, double> cryptoShares = {};
   Map<String, double> stocksShares = {};
   Map<String, double> commoditiesShares = {};
@@ -74,6 +73,24 @@ class _HomePageState extends State<HomePage> {
     });
     setState(() {
       cryptoSum = temp;
+    });
+    calculateNetWorth();
+  }
+
+  void calculateStocksSum() {
+    StocksProvider stocksProvider = Provider.of<StocksProvider>(context, listen: false);
+    double temp = 0.0;
+    stocksShares.forEach((code, amount) {
+      if (code == "AAPL") {
+        temp += amount * stocksProvider.appleList[stocksProvider.appleList.length -1].c;
+      } else if (code == "MSFT") {
+        temp += amount * stocksProvider.microsoftList[stocksProvider.microsoftList.length -1].c;
+      } else {
+        temp += amount * stocksProvider.teslaList[stocksProvider.teslaList.length - 1].c;
+      }
+    });
+    setState(() {
+      stocksSum = temp;
     });
     calculateNetWorth();
   }
@@ -139,10 +156,8 @@ class _HomePageState extends State<HomePage> {
 
   void addOrUpdateCryptoShare(String code, double amount) {
     if (cryptoShares.containsKey(code)) {
-      // If the code exists, update the amount
       cryptoShares[code] = cryptoShares[code]! + amount;
     } else {
-      // If the code doesn't exist, add it with the amount
       cryptoShares[code] = amount;
     }
   }
@@ -163,6 +178,7 @@ class _HomePageState extends State<HomePage> {
           for (var stock in clientStocks) {
             addOrUpdateStocksShare(stock.stock.code, stock.amount);
           }
+          calculateStocksSum();
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -174,10 +190,8 @@ class _HomePageState extends State<HomePage> {
 
   void addOrUpdateStocksShare(String code, double amount) {
     if (stocksShares.containsKey(code)) {
-      // If the code exists, update the amount
       stocksShares[code] = stocksShares[code]! + amount;
     } else {
-      // If the code doesn't exist, add it with the amount
       stocksShares[code] = amount;
     }
   }
@@ -210,15 +224,13 @@ class _HomePageState extends State<HomePage> {
 
   void addOrUpdateCommoditiesShare(String code, double amount) {
     if (commoditiesShares.containsKey(code)) {
-      // If the code exists, update the amount
       commoditiesShares[code] = commoditiesShares[code]! + amount;
     } else {
-      // If the code doesn't exist, add it with the amount
       commoditiesShares[code] = amount;
     }
   }
   void calculateNetWorth(){
-    double temp = vaultsSum + cashBalance + cryptoSum;
+    double temp = vaultsSum + cashBalance + cryptoSum + stocksSum;
     temp = double.parse(temp.toStringAsFixed(2));
 
     setState(() {
@@ -302,7 +314,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
                               offset: const Offset(0, 3),
@@ -366,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
                               offset: const Offset(0, 3),
@@ -420,7 +432,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5), // Color of the shadow
+                              color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 2,
                               blurRadius: 3,
                               offset: const Offset(0, 3),
@@ -544,9 +556,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: stocksShares.isNotEmpty
-                                            ? 'tba €'
-                                            : 'Loading...',
+                                        text: "${stocksSum.toStringAsFixed(2)} €",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25,

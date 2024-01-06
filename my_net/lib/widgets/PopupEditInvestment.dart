@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
-class PopupEditCrypto extends StatefulWidget {
+class PopupEditInvestment extends StatefulWidget {
   final Function(bool, double, String)? onSave;
   final String title;
   final List<String> options;
   final String errorMessage;
 
-  const PopupEditCrypto({
+  const PopupEditInvestment({
     Key? key,
     this.onSave,
     required this.title,
@@ -17,10 +17,10 @@ class PopupEditCrypto extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PopupEditCryptoState createState() => _PopupEditCryptoState();
+  _PopupEditInvestmentState createState() => _PopupEditInvestmentState();
 }
 
-class _PopupEditCryptoState extends State<PopupEditCrypto> {
+class _PopupEditInvestmentState extends State<PopupEditInvestment> {
   bool isAddSelected = true;
   double amount = 0;
   String selectedOption = "";
