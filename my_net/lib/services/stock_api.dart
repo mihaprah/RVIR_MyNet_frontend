@@ -16,9 +16,6 @@ class StockApiService {
           .format(DateTime.now().subtract(const Duration(days: 1)));
       String startDate = DateFormat('yyyy-MM-dd')
           .format(DateTime.now().subtract(const Duration(days: 366)));
-      print(startDate);
-      print(endDate);
-      print(code);
 
       final Uri uri = Uri.parse(
           'https://api.polygon.io/v2/aggs/ticker/$code/range/1/day/$startDate/$endDate?limit=400&apiKey=$apiKeyStocks');

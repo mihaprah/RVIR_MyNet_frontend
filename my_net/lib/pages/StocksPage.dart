@@ -9,7 +9,7 @@ import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/providers/StocksProvider.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
-import 'package:my_net/widgets/PopupAddCrypto.dart';
+import 'package:my_net/widgets/PopupAddInvestment.dart';
 import 'package:my_net/widgets/PopupEditCrypto.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
@@ -308,7 +308,7 @@ class _StocksPageState extends State<StocksPage> {
 
   Future<Stock?> getStockByCode(String code) async {
     try {
-      var endPoint = "/stocks/code/$code";
+      var endPoint = "/stock/code/$code";
       var url = Uri.parse("$baseUrl$endPoint");
 
       var response = await http.get(url);
@@ -408,7 +408,8 @@ class _StocksPageState extends State<StocksPage> {
                                 children: [
                                   PopupEditCrypto(
                                     title: "Change cryptos amount",
-                                    cryptos: availableStocks,
+                                    options: availableStocks,
+                                    errorMessage: "No stocks added.",
                                     onSave: (bool isAddSelected, double amount, String code) {
                                       if (isAddSelected) {
                                         addStocksAmount(amount, code);
@@ -418,8 +419,9 @@ class _StocksPageState extends State<StocksPage> {
                                     },
                                   ),
                                   const SizedBox(width: 50),
-                                  PopupAddCrypto(
-                                    title: "Add new Cryptocurrency",
+                                  PopupAddInvestment(
+                                    title: "Add new Stock",
+                                    options: const ["AAPL", "MSFT", "TSLA"],
                                     onSave: (double amount, String code) {
                                       addNewStock(amount, code);
                                     },
@@ -474,35 +476,26 @@ class _StocksPageState extends State<StocksPage> {
                                     String stockName = "";
                                     final shares = stock.value;
                                     double currentPrice = 0.0;
+                                    Color circleColor = Colors.white;
 
                                     if (stockCode == "MSFT") {
                                       stockName = "Microsoft Corp";
                                       currentPrice = microsoftValue;
+                                      circleColor = const Color(0xFF015AA4);
                                     } else if (stockCode == "AAPL") {
                                       stockName = "Apple Inc.";
                                       currentPrice = appleValue;
+                                      circleColor = const Color(0xFF959595);
                                     } else {
                                       stockName = "Tesla Inc.";
                                       currentPrice = teslaValue;
+                                      circleColor = const Color(0xFFE31A37);
                                     }
 
                                     final completion = (shares*currentPrice)/stocksSum;
                                     final percentage = ((completion * 100).round()).toInt();
 
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        // final result = await Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) => SingleVaultPage(id: vault.id!),
-                                        //   ),
-                                        // );
-                                        //
-                                        // if (result == null) {
-                                        //   fetchClient();
-                                        // }
-                                      },
-                                      child: Row(
+                                    return Row(
                                         children: [
                                           Column(
                                             crossAxisAlignment:
@@ -518,15 +511,14 @@ class _StocksPageState extends State<StocksPage> {
                                                     height: 50,
                                                     decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
+                                                      color: circleColor,
                                                     ),
                                                     child: Center(
                                                       child: Text(
                                                         stockCode,
                                                         style: const TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: 20,
+                                                          fontSize: 16,
                                                           fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
@@ -611,8 +603,8 @@ class _StocksPageState extends State<StocksPage> {
                                             ),
                                           ),
                                         ],
-                                      ),
-                                    );
+                                      );
+
                                   }),
                             ],
                           )),

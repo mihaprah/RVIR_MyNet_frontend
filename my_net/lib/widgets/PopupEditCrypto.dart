@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/Vault.dart';
 
 class PopupEditCrypto extends StatefulWidget {
   final Function(bool, double, String)? onSave;
   final String title;
-  final List<String> cryptos;
+  final List<String> options;
+  final String errorMessage;
 
   const PopupEditCrypto({
     Key? key,
     this.onSave,
     required this.title,
-    required this.cryptos
+    required this.options,
+    required this.errorMessage
   }) : super(key: key);
 
   @override
@@ -22,22 +23,22 @@ class PopupEditCrypto extends StatefulWidget {
 class _PopupEditCryptoState extends State<PopupEditCrypto> {
   bool isAddSelected = true;
   double amount = 0;
-  String selectedCrypto = "";
+  String selectedOption = "";
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        if (widget.cryptos.isNotEmpty) {
+        if (widget.options.isNotEmpty) {
           _showPopup(context, widget.title);
           setState(() {
-            selectedCrypto = widget.cryptos[0];
+            selectedOption = widget.options[0];
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("No cryptocurrencies added."),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(widget.errorMessage),
+              duration: const Duration(seconds: 3),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
             ),
@@ -54,7 +55,7 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
   }
 
   List<DropdownMenuItem<String>> buildDropdownMenuItems() {
-    return widget.cryptos.map((crypto) {
+    return widget.options.map((crypto) {
       return DropdownMenuItem<String>(
         value: crypto,
         child: Text(crypto),
@@ -69,7 +70,7 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(title),
+              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -102,12 +103,12 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
                   ),
                   const SizedBox(height: 10),
                   DropdownButton<String>(
-                    value: selectedCrypto,
+                    value: selectedOption,
                     items: buildDropdownMenuItems(),
                     onChanged: (String? newValue) {
                       setState(() {
                         if (newValue != null) {
-                          selectedCrypto = newValue;
+                          selectedOption = newValue;
                         }
                       });
                     },
@@ -141,7 +142,7 @@ class _PopupEditCryptoState extends State<PopupEditCrypto> {
                   onPressed: () {
                     if (widget.onSave != null){
                       if( amount != 0.0) {
-                        widget.onSave!(isAddSelected, amount, selectedCrypto);
+                        widget.onSave!(isAddSelected, amount, selectedOption);
                         amount = 0.0;
                         isAddSelected = true;
                         Navigator.of(context).pop();

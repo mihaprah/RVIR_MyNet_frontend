@@ -8,7 +8,7 @@ import 'package:my_net/models/Cryptocurrency.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/providers/CryptoProvider.dart';
 import 'package:my_net/widgets/CustomLineChart.dart';
-import 'package:my_net/widgets/PopupAddCrypto.dart';
+import 'package:my_net/widgets/PopupAddInvestment.dart';
 import 'package:my_net/widgets/PopupEditCrypto.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
@@ -408,7 +408,8 @@ class _CryptoPageState extends State<CryptoPage> {
                               children: [
                                 PopupEditCrypto(
                                     title: "Change cryptos amount",
-                                    cryptos: availableCryptos,
+                                    options: availableCryptos,
+                                    errorMessage: "No cryptocurrencies added.",
                                     onSave: (bool isAddSelected, double amount, String code) {
                                       if (isAddSelected) {
                                         addCryptoAmount(amount, code);
@@ -418,8 +419,9 @@ class _CryptoPageState extends State<CryptoPage> {
                                     },
                                 ),
                                 const SizedBox(width: 50),
-                                PopupAddCrypto(
+                                PopupAddInvestment(
                                     title: "Add new Cryptocurrency",
+                                    options: const ["ETH", "BTC", "SOL"],
                                     onSave: (double amount, String code) {
                                       addNewCrypto(amount, code);
                                     },
@@ -474,35 +476,26 @@ class _CryptoPageState extends State<CryptoPage> {
                                   String cryptoName = "";
                                   final shares = crypto.value;
                                   double currentPrice = 0.0;
+                                  Color circleColor = Colors.white;
 
                                   if (cryptoCode == "ETH") {
-                                    cryptoName = "Etherium";
+                                    cryptoName = "Ethereum";
                                     currentPrice = etheriumValue;
+                                    circleColor = const Color(0xFF627EEA);
                                   } else if (cryptoCode == "BTC") {
                                     cryptoName = "Bitcoin";
                                     currentPrice = bitcoinValue;
+                                    circleColor = const Color(0xFFF7931A);
                                   } else {
                                     cryptoName = "Solana";
                                     currentPrice = solanaValue;
+                                    circleColor = const Color(0xFF47BAB1);
                                   }
 
                                   final completion = (shares*currentPrice)/cryptoSum;
                                   final percentage = ((completion * 100).round()).toInt();
 
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      // final result = await Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => SingleVaultPage(id: vault.id!),
-                                      //   ),
-                                      // );
-                                      //
-                                      // if (result == null) {
-                                      //   fetchClient();
-                                      // }
-                                    },
-                                    child: Row(
+                                  return Row(
                                       children: [
                                         Column(
                                           crossAxisAlignment:
@@ -518,8 +511,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                   height: 50,
                                                   decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
+                                                    color: circleColor,
                                                   ),
                                                   child: Center(
                                                     child: Text(
@@ -611,8 +603,8 @@ class _CryptoPageState extends State<CryptoPage> {
                                           ),
                                         ),
                                       ],
-                                    ),
-                                  );
+                                    );
+
                                 }),
                           ],
                         )),

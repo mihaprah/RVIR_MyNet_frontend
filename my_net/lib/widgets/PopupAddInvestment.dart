@@ -2,30 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 
-class PopupAddCrypto extends StatefulWidget {
+class PopupAddInvestment extends StatefulWidget {
   final Function(double, String)? onSave;
   final String title;
+  final List<String> options;
 
-  const PopupAddCrypto({
+  const PopupAddInvestment({
     Key? key,
     this.onSave,
+    required this.options,
     required this.title
   }) : super(key: key);
 
   @override
-  _PopupAddCryptoState createState() => _PopupAddCryptoState();
+  _PopupAddInvestmentState createState() => _PopupAddInvestmentState();
 }
 
-class _PopupAddCryptoState extends State<PopupAddCrypto> {
+class _PopupAddInvestmentState extends State<PopupAddInvestment> {
   double amount = 0;
-  String selectedCrypto = "ETH";
-  final List<String> cryptos = ["ETH", "BTC", "SOL"];
+  String selectedOption = "";
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
           _showPopup(context, widget.title);
+          selectedOption = widget.options[0];
       },
       icon: Icon(
         Icons.add,
@@ -36,10 +38,10 @@ class _PopupAddCryptoState extends State<PopupAddCrypto> {
   }
 
   List<DropdownMenuItem<String>> buildDropdownMenuItems() {
-    return cryptos.map((crypto) {
+    return widget.options.map((option) {
       return DropdownMenuItem<String>(
-        value: crypto,
-        child: Text(crypto),
+        value: option,
+        child: Text(option),
       );
     }).toList();
   }
@@ -51,18 +53,18 @@ class _PopupAddCryptoState extends State<PopupAddCrypto> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(title),
+              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 10),
                   DropdownButton<String>(
-                    value: selectedCrypto,
+                    value: selectedOption,
                     items: buildDropdownMenuItems(),
                     onChanged: (String? newValue) {
                       setState(() {
                         if (newValue != null) {
-                          selectedCrypto = newValue;
+                          selectedOption = newValue;
                         }
                       });
                     },
@@ -96,7 +98,7 @@ class _PopupAddCryptoState extends State<PopupAddCrypto> {
                   onPressed: () {
                     if (widget.onSave != null){
                       if( amount != 0.0) {
-                        widget.onSave!(amount, selectedCrypto);
+                        widget.onSave!(amount, selectedOption);
                         amount = 0.0;
                         Navigator.of(context).pop();
                       } else {
