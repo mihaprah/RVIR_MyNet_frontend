@@ -123,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: SizedBox(

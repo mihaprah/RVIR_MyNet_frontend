@@ -6,8 +6,10 @@ import 'package:my_net/constants/constants.dart';
 import 'package:my_net/models/Client.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_net/widgets/SlowLoadingBar.dart';
+import 'package:provider/provider.dart';
 
 
+import '../providers/ClientProvider.dart';
 import 'LoginPage.dart';
 
 class UserPage extends StatefulWidget {
@@ -181,8 +183,7 @@ class _UserPageState extends State<UserPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 32),
                     ElevatedButton(
                       onPressed: () {
                         saveUserData();
@@ -195,7 +196,41 @@ class _UserPageState extends State<UserPage> {
                       ),
                       child: const Text('Save changes', style: TextStyle(color: Colors.white),),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 16,),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<ClientProvider>(context, listen: false).logout();
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                      style: ButtonStyle(
+                        side: MaterialStateProperty.resolveWith<BorderSide>(
+                              (Set<MaterialState> states) {
+                            return const BorderSide(
+                              color: Colors.red,
+                            );
+                          },
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Colors.white,
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.exit_to_app,
+                            color: Colors.red,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Logout',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -203,4 +238,7 @@ class _UserPageState extends State<UserPage> {
           )),
     );
   }
+}
+
+class LoginScreen {
 }

@@ -15,4 +15,9 @@ class ClientProvider extends ChangeNotifier {
     _client = newClient;
     notifyListeners();
   }
+
+  void logout() {
+    _client = Client(name: '', lastname: '', email: '', cashBalance: 0, password: '', salt: '', vaults: []);
+    notifyListeners();
+  }
 }

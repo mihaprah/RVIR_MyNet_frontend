@@ -45,10 +45,21 @@ class _RegisterPageState extends State<RegisterPage> {
         salt: "",
         vaults: clientVaults);
 
-    if(await checkEmail(newClient)) {
+    if(await checkClientExists(newClient)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Account with this email already exists."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    if (!isEmailValid(newClient.email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Provided email is not valid."),
           duration: Duration(seconds: 3),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
@@ -128,32 +139,42 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-    Future<bool> checkEmail(Client client) async {
-    List<Client> allClients = [];
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+      caseSensitive: false,
+      multiLine: false,
+    );
+    return emailRegex.hasMatch(email);
+  }
 
-    try {
-      var endPoint = "/client";
-      var url = Uri.parse("$baseUrl$endPoint");
 
-      var response = await http.get(url);
-      var jsonData = json.decode(response.body);
+  Future<bool> checkClientExists(Client client) async {
+  List<Client> allClients = [];
 
-      if (response.statusCode == 200) {
-        allClients = (jsonData as List)
-            .map((item) => Client.fromJson(item))
-            .toList();
-        for (var c in allClients) {
-          if (c.email == client.email) {
-            return true;
-          }
+  try {
+    var endPoint = "/client";
+    var url = Uri.parse("$baseUrl$endPoint");
+
+    var response = await http.get(url);
+    var jsonData = json.decode(response.body);
+
+    if (response.statusCode == 200) {
+      allClients = (jsonData as List)
+          .map((item) => Client.fromJson(item))
+          .toList();
+      for (var c in allClients) {
+        if (c.email == client.email) {
+          return true;
         }
-      } else {
-        return true;
       }
-    } catch (e) {
-      print("Error: $e");
+    } else {
+      return true;
     }
-    return false;
+  } catch (e) {
+    print("Error: $e");
+  }
+  return false;
   }
 
   bool passwordMatch() {
