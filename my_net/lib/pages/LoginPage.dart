@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/pages/LoadingPage.dart';
 import 'package:my_net/services/crypto_api.dart';
+import 'package:my_net/services/metals_api.dart';
 import 'package:my_net/services/stock_api.dart';
 import 'package:provider/provider.dart';
 
@@ -57,8 +58,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         Client client = Client.fromJson(jsonData);
-        setGlobalCrypto();
-        setGlobalStocks();
+        // setGlobalCrypto();
+        // setGlobalStocks();
+        setGlobalCommodities();
         setGlobalClient(client);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -101,6 +103,12 @@ class _LoginPageState extends State<LoginPage> {
     StockApiService().getYearlyStocks("AAPL", context);
     StockApiService().getYearlyStocks("MSFT", context);
     StockApiService().getYearlyStocks("TSLA", context);
+  }
+
+  void setGlobalCommodities() {
+    CommoditiesApiService().getYearlyCommodities("XAU", context);
+    CommoditiesApiService().getYearlyCommodities("XAG", context);
+    CommoditiesApiService().getYearlyCommodities("XPT", context);
   }
 
   void setGlobalClient(Client client) {

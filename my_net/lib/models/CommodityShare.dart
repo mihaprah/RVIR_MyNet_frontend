@@ -2,13 +2,13 @@ import 'Commodity.dart';
 import 'Client.dart';
 
 class CommodityShare {
-  final int id;
+  final int? id;
   final double amount;
   final Client client;
   final Commodity commodity;
 
   CommodityShare({
-    required this.id,
+    this.id,
     required this.amount,
     required this.client,
     required this.commodity,

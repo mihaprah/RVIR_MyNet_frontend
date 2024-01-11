@@ -210,7 +210,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => widget.onScreenChange('/commodities', CommodityPage()),
+                            onPressed: () => widget.onScreenChange('/commodities', CommodityPage(client: currentClient,)),
                             style: ButtonStyle(
                               backgroundColor:
                               MaterialStateProperty.resolveWith<Color>(
