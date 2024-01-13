@@ -6,6 +6,7 @@ import 'package:my_net/pages/StocksPage.dart';
 import 'package:my_net/pages/VaultsPage.dart';
 import 'package:my_net/providers/CommoditiesProvider.dart';
 import 'package:my_net/providers/CryptoProvider.dart';
+import 'package:my_net/providers/CurrencyProvider.dart';
 import 'package:my_net/providers/StocksProvider.dart';
 import 'package:provider/provider.dart';
 import 'pages/HomePage.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ClientProvider()),
         ChangeNotifierProvider(create: (_) => CryptoProvider()),
         ChangeNotifierProvider(create: (_) => StocksProvider()),
-        ChangeNotifierProvider(create: (_) => CommoditiesProvider())
+        ChangeNotifierProvider(create: (_) => CommoditiesProvider()),
+        ChangeNotifierProvider(create: (_) => CurrencyProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

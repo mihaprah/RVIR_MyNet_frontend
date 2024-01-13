@@ -13,6 +13,7 @@ import 'package:my_net/widgets/PopupEditInvestment.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
 import '../models/CryptocurrencyShare.dart';
+import '../providers/CurrencyProvider.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +32,7 @@ class CryptoPage extends StatefulWidget {
 
 class _CryptoPageState extends State<CryptoPage> {
   String currentScreen = '/crypto';
+  double conversionRate = 0.0;
   double cryptoSum = 0.0;
   late Client client;
   Map<String, double> cryptoShares = {};
@@ -53,7 +55,16 @@ class _CryptoPageState extends State<CryptoPage> {
     setClient(widget.client!);
     fetchClient();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getConversionRate();
       fetchCryptoPrices();
+    });
+  }
+
+  void getConversionRate() {
+    CurrencyProvider currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
+
+    setState(() {
+      conversionRate = currencyProvider.usdToEurConversion;
     });
   }
 
@@ -89,7 +100,7 @@ class _CryptoPageState extends State<CryptoPage> {
       }
     });
     setState(() {
-      cryptoSum = temp;
+      cryptoSum = temp*conversionRate;
     });
   }
 
@@ -538,7 +549,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "${(shares * currentPrice).toStringAsFixed(2)} €",
+                                                      "${(shares * currentPrice * conversionRate).toStringAsFixed(2)} €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 20,

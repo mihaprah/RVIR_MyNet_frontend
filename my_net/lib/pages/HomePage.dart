@@ -6,6 +6,8 @@ import 'package:my_net/models/Client.dart';
 import 'package:my_net/models/CommodityShare.dart';
 import 'package:my_net/models/StockShare.dart';
 import 'package:my_net/models/UpdateAmountRequest.dart';
+import 'package:my_net/providers/CommoditiesProvider.dart';
+import 'package:my_net/providers/CurrencyProvider.dart';
 import 'package:my_net/providers/StocksProvider.dart';
 import 'package:my_net/widgets/PopupEditCashBalance.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +37,8 @@ class _HomePageState extends State<HomePage> {
   double netWorth = 0.0;
   double cryptoSum = 0.0;
   double stocksSum = 0.0;
+  double commoditiesSum = 0.0;
+  double conversionRate = 0.0;
   Map<String, double> cryptoShares = {};
   Map<String, double> stocksShares = {};
   Map<String, double> commoditiesShares = {};
@@ -54,8 +58,18 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       client = clientOne;
     });
+    getConversionRate();
     getClientCashBalance();
     getClientVaults();
+    calculateNetWorth();
+  }
+
+  void getConversionRate() {
+    CurrencyProvider currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
+
+    setState(() {
+      conversionRate = currencyProvider.usdToEurConversion;
+    });
     calculateNetWorth();
   }
 
@@ -72,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       }
     });
     setState(() {
-      cryptoSum = temp;
+      cryptoSum = temp*conversionRate;
     });
     calculateNetWorth();
   }
@@ -90,7 +104,25 @@ class _HomePageState extends State<HomePage> {
       }
     });
     setState(() {
-      stocksSum = temp;
+      stocksSum = temp*conversionRate;
+    });
+    calculateNetWorth();
+  }
+
+  void calculateCommoditiesSum() {
+    CommoditiesProvider commoditiesProvider = Provider.of<CommoditiesProvider>(context, listen: false);
+    double temp = 0.0;
+    commoditiesShares.forEach((code, amount) {
+      if (code == "XAU") {
+        temp += amount * commoditiesProvider.goldList[commoditiesProvider.goldList.length -1];
+      } else if (code == "XAG") {
+        temp += amount * commoditiesProvider.silverList[commoditiesProvider.silverList.length -1];
+      } else {
+        temp += amount * commoditiesProvider.platinumList[commoditiesProvider.platinumList.length - 1];
+      }
+    });
+    setState(() {
+      commoditiesSum = temp;
     });
     calculateNetWorth();
   }
@@ -213,6 +245,7 @@ class _HomePageState extends State<HomePage> {
             addOrUpdateCommoditiesShare(
                 commodity.commodity.code, commodity.amount);
           }
+          calculateCommoditiesSum();
         } else {
           print("Request failed with status: ${response.statusCode}");
         }
@@ -230,7 +263,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
   void calculateNetWorth(){
-    double temp = vaultsSum + cashBalance + cryptoSum + stocksSum;
+    double temp = vaultsSum + cashBalance + cryptoSum + stocksSum + commoditiesSum;
     temp = double.parse(temp.toStringAsFixed(2));
 
     setState(() {
@@ -504,7 +537,7 @@ class _HomePageState extends State<HomePage> {
                                         text: (" (${client.vaults.length} vaults)"),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
-                                          fontSize: 12,
+                                          fontSize: 10,
                                         ),
                                       ),
                                     ],
@@ -536,7 +569,7 @@ class _HomePageState extends State<HomePage> {
                                             : '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
-                                          fontSize: 12,
+                                          fontSize: 10,
                                         ),
                                       ),
                                     ],
@@ -568,7 +601,7 @@ class _HomePageState extends State<HomePage> {
                                             : '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
-                                          fontSize: 12,
+                                          fontSize: 10,
                                         ),
                                       ),
                                     ],
@@ -588,9 +621,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: commoditiesShares.isNotEmpty
-                                            ? 'tba €'
-                                            : 'Loading...',
+                                        text: "${commoditiesSum.toStringAsFixed(2)} €",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25,
@@ -602,7 +633,7 @@ class _HomePageState extends State<HomePage> {
                                             : '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
-                                          fontSize: 12,
+                                          fontSize: 10,
                                         ),
                                       ),
                                     ],

@@ -73,7 +73,6 @@ class _CommodityPageState extends State<CommodityPage> {
         "XAG": commoditiesProvider.getYearChartData(silverResponse),
         "XPT": commoditiesProvider.getYearChartData(platinumResponse),
       };
-      print(silverResponse);
     });
   }
 
@@ -420,7 +419,7 @@ class _CommodityPageState extends State<CommodityPage> {
                                   ),
                                   const SizedBox(width: 50),
                                   PopupAddInvestment(
-                                    title: "Add new Commodity",
+                                    title: "Add new Commodity (ounces)",
                                     options: const ["XAU", "XAG", "XPT"],
                                     onSave: (double amount, String code) {
                                       addNewCommodity(amount, code);
@@ -481,15 +480,15 @@ class _CommodityPageState extends State<CommodityPage> {
                                     if (commodityCode == "XAU") {
                                       commodityName = "Gold";
                                       currentPrice = goldValue;
-                                      circleColor = const Color(0xFF015AA4);
+                                      circleColor = const Color(0xFFFFD700);
                                     } else if (commodityCode == "XAG") {
                                       commodityName = "Silver";
                                       currentPrice = silverValue;
-                                      circleColor = const Color(0xFF959595);
+                                      circleColor = const Color(0xFF9F9F9F);
                                     } else {
                                       commodityName = "Platinum";
                                       currentPrice = platinumValue;
-                                      circleColor = const Color(0xFFE31A37);
+                                      circleColor = const Color(0xFFE5E4E2);
                                     }
 
                                     final completion = (shares*currentPrice)/commoditiesSum;
@@ -670,11 +669,11 @@ class _CommodityPageState extends State<CommodityPage> {
                                 children: [
                                   const SizedBox(width: 20,),
                                   if (selectedCommodity == "XAU")
-                                    Text("${goldValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold))
+                                    Text("${goldValue.toStringAsFixed(2)} € (per oz t)", style: const TextStyle(fontWeight: FontWeight.bold))
                                   else if (selectedCommodity == "XAG")
-                                    Text("${silverValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                    Text("${silverValue.toStringAsFixed(2)} € (per oz t)", style: const TextStyle(fontWeight: FontWeight.bold),)
                                   else if (selectedCommodity == "XPT")
-                                      Text("${platinumValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                      Text("${platinumValue.toStringAsFixed(2)} € (per oz t)", style: const TextStyle(fontWeight: FontWeight.bold),)
                                 ],
                               ),
                               CustomLineChart(

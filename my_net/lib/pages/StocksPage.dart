@@ -13,6 +13,7 @@ import 'package:my_net/widgets/PopupAddInvestment.dart';
 import 'package:my_net/widgets/PopupEditInvestment.dart';
 import 'package:provider/provider.dart';
 import '../constants/constants.dart';
+import '../providers/CurrencyProvider.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +32,7 @@ class StocksPage extends StatefulWidget {
 
 class _StocksPageState extends State<StocksPage> {
   String currentScreen = '/stocks';
+  double conversionRate = 0.0;
   double stocksSum = 0.0;
   late Client client;
   Map<String, double> stocksShares = {};
@@ -53,7 +55,16 @@ class _StocksPageState extends State<StocksPage> {
     setClient(widget.client!);
     fetchClient();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getConversionRate();
       fetchStocksPrices();
+    });
+  }
+
+  void getConversionRate() {
+    CurrencyProvider currencyProvider = Provider.of<CurrencyProvider>(context, listen: false);
+
+    setState(() {
+      conversionRate = currencyProvider.usdToEurConversion;
     });
   }
 
@@ -89,7 +100,7 @@ class _StocksPageState extends State<StocksPage> {
       }
     });
     setState(() {
-      stocksSum = temp;
+      stocksSum = temp*conversionRate;
     });
   }
 
@@ -538,7 +549,7 @@ class _StocksPageState extends State<StocksPage> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                       Text(
-                                                        "${(shares * currentPrice).toStringAsFixed(2)} €",
+                                                        "${(shares * currentPrice * conversionRate).toStringAsFixed(2)} €",
                                                         style: const TextStyle(
                                                           fontWeight: FontWeight.bold,
                                                           fontSize: 20,

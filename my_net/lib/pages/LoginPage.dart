@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_net/models/Client.dart';
 import 'package:my_net/pages/LoadingPage.dart';
 import 'package:my_net/services/crypto_api.dart';
+import 'package:my_net/services/currency_api.dart';
 import 'package:my_net/services/metals_api.dart';
 import 'package:my_net/services/stock_api.dart';
 import 'package:provider/provider.dart';
@@ -58,8 +59,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         Client client = Client.fromJson(jsonData);
-        // setGlobalCrypto();
-        // setGlobalStocks();
+        setGlobalConversionRate();
+        setGlobalCrypto();
+        setGlobalStocks();
         setGlobalCommodities();
         setGlobalClient(client);
       } else {
@@ -91,6 +93,10 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return true;
     }
+  }
+
+  void setGlobalConversionRate() {
+    CurrencyApiService().getCurrencyConversion("EUR", context);
   }
 
   void setGlobalCrypto() {
