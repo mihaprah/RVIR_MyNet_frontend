@@ -13,6 +13,7 @@ import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
 import '../widgets/CustomLineChart.dart';
+import '../widgets/CustomSnackBar.dart';
 import '../widgets/PopupAddInvestment.dart';
 import '../widgets/PopupEditInvestment.dart';
 
@@ -117,18 +118,11 @@ class _CommodityPageState extends State<CommodityPage> {
 
         var response = await http.delete(url);
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("$code commodity removed successfully."),
-              duration: const Duration(seconds: 3),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          showPopUp("$code commodity removed successfully.", false);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
 
   }
@@ -147,7 +141,7 @@ class _CommodityPageState extends State<CommodityPage> {
         getClientCommodities();
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -184,11 +178,11 @@ class _CommodityPageState extends State<CommodityPage> {
           checkForEmptyCommodities();
           calculateCommoditiesSum();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -207,14 +201,7 @@ class _CommodityPageState extends State<CommodityPage> {
         double oldAmount = getOldAmount(code);
         double newAmount = oldAmount + amount;
         if (newAmount < 0.0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("You do not have that much of $code."),
-              duration: const Duration(seconds: 3),
-              backgroundColor: Colors.red,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          showPopUp("You do not have that much of $code.", true);
           return;
         }
         if (share != null) {
@@ -232,23 +219,16 @@ class _CommodityPageState extends State<CommodityPage> {
 
           if (response.statusCode == 200) {
             getClientCommodities();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$code commodity amount updated successfully."),
-                duration: const Duration(seconds: 3),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            showPopUp("$code commodity amount updated successfully.", false);
           }
         } else {
-          print('CommodityShare not found for code: $code');
+          showPopUp("Unfortunately something went wrong.", true);
         }
       } else {
-        print('Empty code provided');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch (e) {
-      print('Error: $e');
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -286,23 +266,16 @@ class _CommodityPageState extends State<CommodityPage> {
           );
           if (response.statusCode == 200) {
             getClientCommodities();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("New $code commodity added successfully."),
-                duration: const Duration(seconds: 3),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            showPopUp("New $code commodity added successfully.", false);
           }
         } else {
-          print('CommodityShare not found for code: $code');
+          showPopUp("Unfortunately something went wrong.", true);
         }
       } else {
-        print('Empty code provided.');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -317,13 +290,21 @@ class _CommodityPageState extends State<CommodityPage> {
       if (response.statusCode == 200) {
         return Commodity.fromJson(jsonData);
       } else {
-        print('Failed to get commodity. Status code: ${response.statusCode}');
+        showPopUp("Unfortunately something went wrong.", true);
         return null;
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
     return null;
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
+    }
   }
 
   @override
@@ -525,7 +506,7 @@ class _CommodityPageState extends State<CommodityPage> {
                                                       commodityCode,
                                                       style: const TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 16,
+                                                        fontSize: 20,
                                                         fontWeight: FontWeight.bold,
                                                       ),
                                                     ),

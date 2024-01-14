@@ -9,6 +9,7 @@ import 'package:my_net/models/UpdateAmountRequest.dart';
 import 'package:my_net/providers/CommoditiesProvider.dart';
 import 'package:my_net/providers/CurrencyProvider.dart';
 import 'package:my_net/providers/StocksProvider.dart';
+import 'package:my_net/widgets/CustomSnackBar.dart';
 import 'package:my_net/widgets/PopupEditCashBalance.dart';
 import 'package:provider/provider.dart';
 import '../models/CryptocurrencyShare.dart';
@@ -138,10 +139,10 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         setClient(Client.fromJson(jsonData));
       } else {
-        print('Request failed with status: ${response.statusCode}');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch (e) {
-      print('Error: $e');
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -178,11 +179,11 @@ class _HomePageState extends State<HomePage> {
           }
           calculateCryptoSum();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -212,11 +213,11 @@ class _HomePageState extends State<HomePage> {
           }
           calculateStocksSum();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -247,11 +248,11 @@ class _HomePageState extends State<HomePage> {
           }
           calculateCommoditiesSum();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -294,11 +295,19 @@ class _HomePageState extends State<HomePage> {
           calculateNetWorth();
           fetchClient();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
+    }
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
     }
   }
 

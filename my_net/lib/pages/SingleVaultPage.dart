@@ -9,6 +9,7 @@ import 'package:my_net/widgets/PopupDeleteVault.dart';
 import 'package:my_net/widgets/SlowLoadingBar.dart';
 
 import '../models/Vault.dart';
+import '../widgets/CustomSnackBar.dart';
 import 'LoginPage.dart';
 
 class SingleVaultPage extends StatefulWidget {
@@ -63,7 +64,7 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
         });
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -94,18 +95,11 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
 
       if (response.statusCode == 200){
         getSingleVault();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Changes saved successfully."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("Changes saved successfully.", false);
         Navigator.pop(context, null);
       }
     } catch(e){
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -133,17 +127,18 @@ class _SingleVaultPageState extends State<SingleVaultPage> {
 
       if (response.statusCode == 200){
         Navigator.pop(context, null);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Vault deleted successfully."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("Vault deleted successfully.", false);
       }
     } catch (e){
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
+    }
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
     }
   }
 

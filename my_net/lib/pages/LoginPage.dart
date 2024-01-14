@@ -13,6 +13,7 @@ import 'package:my_net/services/stock_api.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/ClientProvider.dart';
+import '../widgets/CustomSnackBar.dart';
 
 var shadowDecoration = BoxDecoration(
   borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -65,30 +66,16 @@ class _LoginPageState extends State<LoginPage> {
         setGlobalCommodities();
         setGlobalClient(client);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Email or password incorrect."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("Email or password incorrect.", true);
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
   bool checkInput(LoginRequest loginRequest){
     if (loginRequest.email == "" || loginRequest.password == ""){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Fill all the fields."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Fill all the fields.", true);
       return false;
     } else {
       return true;
@@ -125,6 +112,14 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) => LoadingPage(client: client,),
       ),
     );
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
+    }
   }
 
   @override

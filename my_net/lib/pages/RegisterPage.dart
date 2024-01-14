@@ -7,6 +7,7 @@ import 'package:my_net/models/Client.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/Vault.dart';
+import '../widgets/CustomSnackBar.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -46,59 +47,24 @@ class _RegisterPageState extends State<RegisterPage> {
         vaults: clientVaults);
 
     if(await checkClientExists(newClient)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Account with this email already exists."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Account with this email already exists.", true);
       return;
     }
     if (!isEmailValid(newClient.email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Provided email is not valid."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Provided email is not valid.", true);
       return;
     }
 
     if (!passwordMatch()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Password and repeat password must match."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Password and repeat password must match.", true);
       return;
     }
     if (!validatePassword()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("First letter of password must be capital one and it must be at least 8 letters long."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("First letter of password must be capital one and it must be at least 8 letters long.", true);
       return;
     }
     if (!validateInput(newClient)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Fill out all the fields."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Fill out all the fields.", true);
       return;
     }
 
@@ -116,26 +82,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 200) {
         Navigator.pushReplacementNamed(context, "/login");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("New account created successfully."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("New account created successfully.", false);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Something went wrong with registration."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("Something went wrong with registration.", true);
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -172,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return true;
     }
   } catch (e) {
-    print("Error: $e");
+    showPopUp("Unfortunately something went wrong.", true);
   }
   return false;
   }
@@ -207,6 +159,14 @@ class _RegisterPageState extends State<RegisterPage> {
       return true;
     }
     return false;
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
+    }
   }
 
   @override

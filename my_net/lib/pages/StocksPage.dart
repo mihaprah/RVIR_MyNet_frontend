@@ -17,6 +17,8 @@ import '../providers/CurrencyProvider.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
+import '../widgets/CustomSnackBar.dart';
+
 
 class StocksPage extends StatefulWidget {
   final Client? client;
@@ -128,18 +130,11 @@ class _StocksPageState extends State<StocksPage> {
 
         var response = await http.delete(url);
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("$code stock removed successfully."),
-              duration: const Duration(seconds: 3),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          showPopUp("$code stock removed successfully.", false);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
 
   }
@@ -158,7 +153,7 @@ class _StocksPageState extends State<StocksPage> {
         getClientStocks();
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -195,11 +190,11 @@ class _StocksPageState extends State<StocksPage> {
           checkForEmptyStocks();
           calculateStocksSum();
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -243,23 +238,16 @@ class _StocksPageState extends State<StocksPage> {
 
           if (response.statusCode == 200) {
             getClientStocks();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("$code stock amount updated successfully."),
-                duration: const Duration(seconds: 3),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            showPopUp("$code stock amount updated successfully.", false);
           }
         } else {
-          print('StockShare not found for code: $code');
+          showPopUp("Unfortunately something went wrong.", true);
         }
       } else {
-        print('Empty code provided');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch (e) {
-      print('Error: $e');
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -297,23 +285,16 @@ class _StocksPageState extends State<StocksPage> {
           );
           if (response.statusCode == 200) {
             getClientStocks();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("New $code stock added successfully."),
-                duration: const Duration(seconds: 3),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            showPopUp("New $code stock added successfully.", false);
           }
         } else {
-          print('StockShare not found for code: $code');
+          showPopUp("Unfortunately something went wrong.", true);
         }
       } else {
-        print('Empty code provided.');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -328,13 +309,21 @@ class _StocksPageState extends State<StocksPage> {
       if (response.statusCode == 200) {
         return Stock.fromJson(jsonData);
       } else {
-        print('Failed to get stock. Status code: ${response.statusCode}');
+        showPopUp("Unfortunately something went wrong.", true);
         return null;
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
     return null;
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
+    }
   }
 
 

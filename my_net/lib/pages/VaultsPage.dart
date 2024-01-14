@@ -12,6 +12,7 @@ import '../models/Vault.dart';
 import '../widgets/CustomAppBar.dart';
 import 'package:http/http.dart' as http;
 
+import '../widgets/CustomSnackBar.dart';
 import 'SingleVaultPage.dart';
 
 class VaultsPage extends StatefulWidget {
@@ -53,7 +54,7 @@ class _VaultsPageState extends State<VaultsPage> {
         getClientVaults();
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -76,14 +77,7 @@ class _VaultsPageState extends State<VaultsPage> {
 
   Future<void> updateVaultAmount(bool isAddSelected, double amount, int vaultId) async {
     if (isAddSelected && amount > client.cashBalance){
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Cash balance is not big enough."),
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showPopUp("Cash balance is not big enough.", true);
       return;
     }
 
@@ -115,11 +109,11 @@ class _VaultsPageState extends State<VaultsPage> {
         }
         fetchClient();
       } else {
-        print(response.statusCode);
+        showPopUp("Unfortunately something went wrong.", true);
       }
 
     } catch(e){
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -142,11 +136,11 @@ class _VaultsPageState extends State<VaultsPage> {
         if (response.statusCode == 200) {
 
         } else {
-          print("Request failed with status: ${response.statusCode}");
+          showPopUp("Unfortunately something went wrong.", true);
         }
       }
     } catch (e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
     }
   }
 
@@ -166,20 +160,20 @@ class _VaultsPageState extends State<VaultsPage> {
       if (response.statusCode == 200) {
         fetchClient();
         getClientVaults();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Vault added successfully."),
-            duration: Duration(seconds: 3),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        showPopUp("Vault added successfully.", false);
       } else {
-        print('Request failed with status: ${response.statusCode}');
+        showPopUp("Unfortunately something went wrong.", true);
       }
     } catch(e) {
-      print("Error: $e");
+      showPopUp("Unfortunately something went wrong.", true);
+    }
+  }
+
+  void showPopUp(String message, bool isError) {
+    if (isError) {
+      CustomSnackBar.showError(context: context, message: message);
+    } else {
+      CustomSnackBar.showSuccess(context: context, message: message);
     }
   }
 
