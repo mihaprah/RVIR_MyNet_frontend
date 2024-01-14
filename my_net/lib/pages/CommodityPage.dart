@@ -419,7 +419,7 @@ class _CommodityPageState extends State<CommodityPage> {
                                   ),
                                   const SizedBox(width: 50),
                                   PopupAddInvestment(
-                                    title: "Add new Commodity (ounces)",
+                                    title: "Add new Commodity   (troy ounces)",
                                     options: const ["XAU", "XAG", "XPT"],
                                     onSave: (double amount, String code) {
                                       addNewCommodity(amount, code);
@@ -459,12 +459,20 @@ class _CommodityPageState extends State<CommodityPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Commodities',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              if (commoditiesShares.isEmpty)
+                                const Text(
+                                  'You have not added any commodities.',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
+                              if (commoditiesShares.isNotEmpty)
+                                const Text(
+                                  'Commodities',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ListView.builder(
                                   itemCount: commoditiesShares.length,
                                   shrinkWrap: true,
@@ -545,7 +553,7 @@ class _CommodityPageState extends State<CommodityPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "$shares $commodityCode \u2022 $currentPrice €",
+                                                      "$shares oz t \u2022 ${currentPrice.toStringAsFixed(2)} €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 12,

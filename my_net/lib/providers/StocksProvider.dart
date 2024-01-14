@@ -40,12 +40,12 @@ class StocksProvider extends ChangeNotifier {
     double monthlyAverage = 0.0;
     int count = 0;
 
-    for (int i = 0; i < 252; i++) {
+    for (int i = 0; i < 240; i++) {
       monthlyAverage += list[i].c;
       count++;
 
-      if ((i + 1) % 21 == 0) {
-        int monthIndex = ((i + 1) / 21).floor() - 1;
+      if ((i + 1) % 20 == 0) {
+        int monthIndex = ((i + 1) / 20).floor() - 1;
         monthlyList.add(FlSpot(monthIndex.toDouble(), (monthlyAverage / count)));
         monthlyAverage = 0.0;
         count = 0;

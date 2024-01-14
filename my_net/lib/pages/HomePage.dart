@@ -534,7 +534,9 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: (" (${client.vaults.length} vaults)"),
+                                        text: client.vaults.isNotEmpty
+                                            ? ' (${client.vaults.length} currencies)'
+                                            : '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,
                                           fontSize: 10,
@@ -672,12 +674,20 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Vaults',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              if (clientVaults.isEmpty)
+                                const Text(
+                                  'You have not created any vaults.',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
+                              if (clientVaults.isNotEmpty)
+                                const Text(
+                                  'Vaults',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ListView.builder(
                                   itemCount: clientVaults.length,
                                   shrinkWrap: true,

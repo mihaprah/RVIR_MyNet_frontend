@@ -471,12 +471,20 @@ class _CryptoPageState extends State<CryptoPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Cryptocurrencies',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            if (cryptoShares.isEmpty)
+                              const Text(
+                                'You have not added any cryptocurrencies.',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
+                            if (cryptoShares.isNotEmpty)
+                              const Text(
+                                'Cryptocurrencies',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ListView.builder(
                                 itemCount: cryptoShares.length,
                                 shrinkWrap: true,
@@ -503,7 +511,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                     circleColor = const Color(0xFF47BAB1);
                                   }
 
-                                  final completion = (shares*currentPrice)/cryptoSum;
+                                  final completion = (shares*currentPrice*conversionRate)/cryptoSum;
                                   final percentage = ((completion * 100).round()).toInt();
 
                                   return Row(

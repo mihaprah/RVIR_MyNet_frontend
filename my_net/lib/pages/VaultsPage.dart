@@ -318,12 +318,20 @@ class _VaultsPageState extends State<VaultsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Vaults',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
+                            if (clientVaults.isEmpty)
+                              const Text(
+                                'You have not created any vaults.',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
+                            if (clientVaults.isNotEmpty)
+                              const Text(
+                                'Vaults',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ListView.builder(
                                 itemCount: clientVaults.length,
                                 shrinkWrap: true,

@@ -471,12 +471,20 @@ class _StocksPageState extends State<StocksPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Stocks',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                              if (stocksShares.isEmpty)
+                                const Text(
+                                  'You have not added any stocks.',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
+                              if (stocksShares.isNotEmpty)
+                                const Text(
+                                  'Stocks',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ListView.builder(
                                   itemCount: stocksShares.length,
                                   shrinkWrap: true,
@@ -503,7 +511,7 @@ class _StocksPageState extends State<StocksPage> {
                                       circleColor = const Color(0xFFE31A37);
                                     }
 
-                                    final completion = (shares*currentPrice)/stocksSum;
+                                    final completion = (shares*currentPrice*conversionRate)/stocksSum;
                                     final percentage = ((completion * 100).round()).toInt();
 
                                     return Row(
