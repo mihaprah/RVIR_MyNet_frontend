@@ -40,7 +40,7 @@ class _UserPageState extends State<UserPage> {
 
   Future<void> getClient() async {
     try {
-      var endPoint = "/client/1";
+      var endPoint = "/client/${widget.id}";
       var url = Uri.parse("$baseUrl$endPoint");
 
       var response = await http.get(url);

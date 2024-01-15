@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_net/models/PolygonApiResponse.dart';
@@ -31,10 +32,24 @@ class StockApiService {
         }
 
       } else {
-        print('Error Stocks 1: ${response.reasonPhrase}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Stocks prices could not be loaded properly."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } catch (error) {
-      print('Error Stocks 2 with code $code: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Stocks prices could not be loaded properly."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
 
   }

@@ -76,14 +76,14 @@ class _CryptoPageState extends State<CryptoPage> {
       solanaResponse = cryptoProvider.solanaList;
 
       setState(() {
-        bitcoinValue = bitcoinResponse[bitcoinResponse.length - 1].c;
-        etheriumValue = etheriumResponse[etheriumResponse.length -1].c;
-        solanaValue = solanaResponse[solanaResponse.length - 1].c;
+        bitcoinValue = (bitcoinResponse[bitcoinResponse.length - 1].c) * conversionRate;
+        etheriumValue = (etheriumResponse[etheriumResponse.length -1].c) * conversionRate;
+        solanaValue = (solanaResponse[solanaResponse.length - 1].c) * conversionRate;
         cryptoChartMaxValues = cryptoProvider.cryptoMaxValues;
         cryptoChartData = {
-          "ETH": cryptoProvider.getYearChartData(etheriumResponse),
-          "BTC": cryptoProvider.getYearChartData(bitcoinResponse),
-          "SOL": cryptoProvider.getYearChartData(solanaResponse),
+          "ETH": cryptoProvider.getYearChartData(etheriumResponse, conversionRate),
+          "BTC": cryptoProvider.getYearChartData(bitcoinResponse, conversionRate),
+          "SOL": cryptoProvider.getYearChartData(solanaResponse, conversionRate),
         };
       });
   }
@@ -230,7 +230,7 @@ class _CryptoPageState extends State<CryptoPage> {
 
           if (response.statusCode == 200) {
             getClientCrypto();
-            showPopUp("code cryptocurrency amount updated successfully.", false);
+            showPopUp("$code cryptocurrency amount updated successfully.", false);
           }
         } else {
           showPopUp("Unfortunately something went wrong.", true);
@@ -538,7 +538,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "${(shares * currentPrice * conversionRate).toStringAsFixed(2)} €",
+                                                      "${(shares * currentPrice).toStringAsFixed(2)} €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 20,
@@ -546,7 +546,7 @@ class _CryptoPageState extends State<CryptoPage> {
                                                     ),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      "$shares $cryptoCode \u2022 $currentPrice €",
+                                                      "${shares.toStringAsFixed(5)} $cryptoCode \u2022 ${currentPrice.toStringAsFixed(2)} €",
                                                       style: const TextStyle(
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 12,
@@ -670,11 +670,11 @@ class _CryptoPageState extends State<CryptoPage> {
                               children: [
                                 const SizedBox(width: 20,),
                                 if (selectedCrypto == "BTC")
-                                  Text("$bitcoinValue €", style: const TextStyle(fontWeight: FontWeight.bold))
+                                  Text("${bitcoinValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold))
                                 else if (selectedCrypto == "ETH")
-                                  Text("$etheriumValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                  Text("${etheriumValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
                                 else if (selectedCrypto == "SOL")
-                                  Text("$solanaValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                  Text("${solanaValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
                               ],
                             ),
                             CustomLineChart(

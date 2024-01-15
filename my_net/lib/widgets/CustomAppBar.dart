@@ -91,6 +91,7 @@ class _CustomAppBarState extends State<CustomAppBar>{
             ),
           ],
         ),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(45.0),

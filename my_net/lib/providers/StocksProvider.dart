@@ -35,7 +35,7 @@ class StocksProvider extends ChangeNotifier {
     _stocksMaxValues[code] = (maxAmount*1.2).toInt().toDouble();
   }
 
-  List<FlSpot> getYearChartData(List<PolygonApiResponse> list) {
+  List<FlSpot> getYearChartData(List<PolygonApiResponse> list, double conversionRate) {
     List<FlSpot> monthlyList = [];
     double monthlyAverage = 0.0;
     int count = 0;
@@ -46,7 +46,7 @@ class StocksProvider extends ChangeNotifier {
 
       if ((i + 1) % 20 == 0) {
         int monthIndex = ((i + 1) / 20).floor() - 1;
-        monthlyList.add(FlSpot(monthIndex.toDouble(), (monthlyAverage / count)));
+        monthlyList.add(FlSpot(monthIndex.toDouble(), ((monthlyAverage / count) * conversionRate)));
         monthlyAverage = 0.0;
         count = 0;
       }

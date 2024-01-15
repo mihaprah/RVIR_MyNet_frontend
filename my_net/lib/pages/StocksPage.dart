@@ -77,14 +77,14 @@ class _StocksPageState extends State<StocksPage> {
     teslaResponse = stocksProvider.teslaList;
 
     setState(() {
-      appleValue = appleResponse[appleResponse.length - 1].c;
-      microsoftValue = microsoftResponse[microsoftResponse.length -1].c;
-      teslaValue = teslaResponse[teslaResponse.length - 1].c;
+      appleValue = (appleResponse[appleResponse.length - 1].c) * conversionRate;
+      microsoftValue = (microsoftResponse[microsoftResponse.length -1].c) * conversionRate;
+      teslaValue = (teslaResponse[teslaResponse.length - 1].c) * conversionRate;
       stocksChartMaxValues = stocksProvider.stocksMaxValues;
       stocksChartData = {
-        "MSFT": stocksProvider.getYearChartData(microsoftResponse),
-        "AAPL": stocksProvider.getYearChartData(appleResponse),
-        "TSLA": stocksProvider.getYearChartData(teslaResponse),
+        "MSFT": stocksProvider.getYearChartData(microsoftResponse, conversionRate),
+        "AAPL": stocksProvider.getYearChartData(appleResponse, conversionRate),
+        "TSLA": stocksProvider.getYearChartData(teslaResponse, conversionRate),
       };
     });
   }
@@ -546,7 +546,7 @@ class _StocksPageState extends State<StocksPage> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                       Text(
-                                                        "${(shares * currentPrice * conversionRate).toStringAsFixed(2)} €",
+                                                        "${(shares * currentPrice).toStringAsFixed(2)} €",
                                                         style: const TextStyle(
                                                           fontWeight: FontWeight.bold,
                                                           fontSize: 20,
@@ -554,7 +554,7 @@ class _StocksPageState extends State<StocksPage> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                       Text(
-                                                        "$shares $stockCode \u2022 $currentPrice €",
+                                                        "${shares.toStringAsFixed(2)} $stockCode \u2022 ${currentPrice.toStringAsFixed(2)} €",
                                                         style: const TextStyle(
                                                           fontWeight: FontWeight.w400,
                                                           fontSize: 12,
@@ -678,11 +678,11 @@ class _StocksPageState extends State<StocksPage> {
                                 children: [
                                   const SizedBox(width: 20,),
                                   if (selectedStock == "AAPL")
-                                    Text("$appleValue €", style: const TextStyle(fontWeight: FontWeight.bold))
+                                    Text("${appleValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold))
                                   else if (selectedStock == "MSFT")
-                                    Text("$microsoftValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                    Text("${microsoftValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
                                   else if (selectedStock == "TSLA")
-                                      Text("$teslaValue €", style: const TextStyle(fontWeight: FontWeight.bold),)
+                                      Text("${teslaValue.toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold),)
                                 ],
                               ),
                               CustomLineChart(

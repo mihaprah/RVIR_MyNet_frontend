@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_net/models/PolygonApiResponse.dart';
@@ -33,10 +34,24 @@ class CryptoApiService {
         }
 
       } else {
-        print('Error Crypto 1: ${response.reasonPhrase}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Crypto prices could not be loaded properly."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } catch (error) {
-      print('Error Crypto 2: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Crypto prices could not be loaded properly."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
 
   }

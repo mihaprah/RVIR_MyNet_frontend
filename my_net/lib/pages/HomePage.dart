@@ -544,7 +544,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       TextSpan(
                                         text: client.vaults.isNotEmpty
-                                            ? ' (${client.vaults.length} currencies)'
+                                            ? ' (${client.vaults.length} vaults)'
                                             : '',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.normal,

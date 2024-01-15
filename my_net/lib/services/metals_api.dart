@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:my_net/providers/CommoditiesProvider.dart';
 import 'package:provider/provider.dart';
 
 class CommoditiesApiService {
-  final String apiKeyCommodities = "c1af6c43674efd27bfa60d17b40c7cfe";
+  final String apiKeyCommodities = "d7db8a66edce0a2f45bab3bbc6a67566";
 
   Future<void> getYearlyCommodities(String code, BuildContext context) async {
     try {
@@ -41,10 +42,24 @@ class CommoditiesApiService {
         }
 
       } else {
-        print("Error Commodities $code 1: ${response.reasonPhrase}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Commodities prices could not be loaded properly."),
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } catch (e) {
-      print("Error Commodities $code 2: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Commodities prices could not be loaded properly."),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
 
   }
